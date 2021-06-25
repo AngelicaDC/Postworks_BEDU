@@ -1,4 +1,4 @@
-#Postwork sesion1
+#,Postwork sesion1
 #Importamos el data set de la liga de futbol espanola 2019-2020 usando la funcion read.csv() desde el URL.
 LigaEsp2019.2020 <- read.csv("https://www.football-data.co.uk/mmz4281/1920/SP1.csv")
 
