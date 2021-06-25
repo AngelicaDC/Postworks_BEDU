@@ -1,0 +1,229 @@
+#Postwork sesion1
+#Importamos el data set de la liga de futbol espanola 2019-2020 usando la funcion read.csv() desde el URL.
+LigaEsp2019.2020 <- read.csv("https://www.football-data.co.uk/mmz4281/1920/SP1.csv")
+
+#Goles anotados por los equipos que jugaron en casa (FTHG) y los visitantes (FTAG)
+goles.casa <- c(LigaEsp2019.2020$FTHG)
+goles.visitante <- c(LigaEsp2019.2020$FTAG)
+
+#Tablas de frecuencia absoluta de goles de la casa, goles de visitantes y casa vs visitantes
+frec.goles.casa <- table(goles.casa)
+frec.goles.visitante <- table(goles.visitante)
+frec.goles <- table(goles.casa, goles.visitante)
+
+#Tablas de frecuencia relativa de goles de la casa y goles de visitantes
+frec.rel.goles.casa <- prop.table(x=frec.goles.casa)
+frec.rel.goles.visitante <- prop.table(x=frec.goles.visitante)
+
+goles <- c(seq(0,6,1))
+for (i in 1:length(frec.rel.goles.casa)) {
+  print(paste("La probabilidad marginal de que la casa anote",i,"goles es: ", frec.rel.goles.casa[i]))
+}
+
+for (i in 1:length(frec.rel.goles.visitante)) {
+  print(paste("La probabilidad marginal de que el vistitante anote",i,"goles es: ", frec.rel.goles.visitante[i]))
+}
+
+#Tabla de probabilidad conjunto de "x" goles del equipo de casa vs "y" goles del visitante
+print("La probabilidad conjunta de que el equipo de casa anote 'x' goles y el equivo visitante anote 'y' goles estÃ¡ representada en la tabla:")
+(frec.rel.goles <- prop.table(frec.goles))
+
+#Postwork sesion 2
+library(dplyr)
+setwd("C:/Users/Ok/Documents/BEDU/R/postworks/")
+#Creamos una lista con las direcciones donde se encuentran los archivos de futbol
+#de las temporadas 2017/2018, 2018/2019 y 2019/2020 de la primera divisiÃ³n de la liga espaÃ±ola
+l.URLs <- list("https://www.football-data.co.uk/mmz4281/1718/SP1.csv",
+               "https://www.football-data.co.uk/mmz4281/1819/SP1.csv",
+               "https://www.football-data.co.uk/mmz4281/1920/SP1.csv"
+)
+#Leemos los archivos desde las URLs y los guardamos como elementos DataFrame en una lista
+lista_archivos <- lapply(l.URLs, read.csv)
+length(lista_archivos) #La lista contiene 3 elementos que son los 3 dataframes
+
+#El elemento 1 de la lista contiene el dataframe con los datos de la temporada 2017-2018
+str(data.frame(lista_archivos[1]))
+head(data.frame(lista_archivos[1]))
+View(data.frame(lista_archivos[1]))
+summary(data.frame(lista_archivos[1]))
+
+#El elemento 2 de la lista contiene el dataframe con los datos de la temporada 2018-2019
+str(data.frame(lista_archivos[2]))
+head(data.frame(lista_archivos[2]))
+View(data.frame(lista_archivos[2]))
+summary(data.frame(lista_archivos[2]))
+
+#El elemento 3 de la lista contiene el dataframe con los datos de la temporada 2019-2020
+str(data.frame(lista_archivos[3]))
+head(data.frame(lista_archivos[3]))
+View(data.frame(lista_archivos[3]))
+summary(data.frame(lista_archivos[3]))
+
+#Creo una lista con las columnas seleccionadas de cada dataframe
+lista_columnas <- lapply(lista_archivos, select, c("Date", "HomeTeam", "AwayTeam", "FTHG", "FTAG", "FTR"))
+length(lista_columnas) #La lista contiene 3 elementos que son un dataframe de las columnas seleccionadas por cada temporada
+str(data.frame(lista_columnas[1]))
+str(data.frame(lista_columnas[2]))
+str(data.frame(lista_columnas[3]))
+
+#La columa "Date" de los dataframes es de clase caracter. Debemos de cambiarla a clase Date
+#El formato es diferente para cada dataframe
+tmp2017.2018.dfcols <- mutate(data.frame(lista_columnas[1]), Date = as.Date(Date, "%d/%m/%y"))
+tmp2018.2019.dfcols <- mutate(data.frame(lista_columnas[2]), Date = as.Date(Date, "%d/%m/%Y"))
+tmp2019.2020.dfcols <- mutate(data.frame(lista_columnas[3]), Date = as.Date(Date, "%d/%m/%Y"))
+
+#Ahora comprobamos que la columna "Date" sea clase Date.
+class(tmp2017.2018.dfcols$Date)
+class(tmp2018.2019.dfcols$Date)
+class(tmp2019.2020.dfcols$Date)
+
+#Por ultimo unimos todos los dataframes en uno solo
+lista_final <- list(tmp2017.2018.dfcols,tmp2018.2019.dfcols,tmp2019.2020.dfcols)
+df.todo.final <- do.call(rbind, lista_final)
+str(df.todo.final)
+
+#Guardamos el dataframe final para usarlo en la sesion 3
+write.csv(df.todo.final, file = "Fut.ligaEsp.Postwork2.csv", sep = ",", col.names=TRUE, row.names = FALSE)
+
+
+library(dplyr)
+library(ggplot2)
+
+#Importar y leer el archivo resultado del postwork 2; datos de la liga espaÃ±ola de futbol
+Fut.ligaEsp <- read.csv("Fut.ligaEsp.Postwork2.csv")
+str(Fut.ligaEsp)
+
+#Goles anotados por los equipos que jugaron en casa (FTHG) y los visitantes (FTAG)
+#Encontrar la probabilidad marginal de que la casa anote "x" goles a partir de las frec. relativas
+Frec.abs.FTH <- table(Fut.ligaEsp$FTHG) #Frecuencias absolutas
+pmarg.golesCasa <- prop.table(Frec.abs.FTHG) #Probabilidades marginales
+
+#Encontrar la probabilidad marginal de que el visitante anote "y" goles a partir de las frec. relativas
+Frec.abs.FTAG <- table(Fut.ligaEsp$FTAG) #Frecuencias absolutas
+pmarg.golesVisitante <- prop.table(Frec.abs.FTAG) #Probabilidades marginales
+
+#Encontrar probabilidad conjunta de que la casa anote "x" goles y el visitante "y" goles
+Frec.abs.ambos <- table(Fut.ligaEsp$FTHG, Fut.ligaEsp$FTAG)
+prob.conjunta <- prop.table(Frec.abs.ambos) #Probabilidades conjunta
+
+#Crear dataframes de probablidades para poder usar ggplot
+#Casa
+df.goles.casa <- data.frame(pmarg.golesCasa)
+equipo <- rep(x = "casa", 9)
+df.goles.casa <- cbind(df.goles.casa, equipo)
+#Visita
+df.goles.visitante <- data.frame(pmarg.golesVisitante)
+equipo <- rep(x = "visitante", 7)
+df.goles.visitante <- cbind(df.goles.visitante, equipo)
+#Conjunta
+df.prob.conjunta <- data.frame(prob.conjunta)
+df.prob.conjunta <- rename(df.prob.conjunta, Goles_casa=Var1, Goles_visitante=Var2)
+
+#Unir dataframes para hacer un grafico de barras que represente a ambos equipos
+df.goles.ambos <- rbind(df.goles.casa, df.goles.visitante)
+sort(df.goles.ambos$Freq)
+
+#Graficar las probabilidades marginales de cada equipo
+df.goles.ambos %>%
+  ggplot() + 
+  aes(x=Var1, y=Freq, fill = equipo) +
+  geom_bar(stat="identity", position="dodge", color="red4") +
+  ggtitle("Probabilidad de anotar goles") +
+  ylab("Probabilidad marginal") +
+  xlab("NÃºmero de goles") +
+  facet_wrap("equipo") +
+  scale_fill_manual(name="Equipo", values=c("red4","oldlace")) +
+  theme(plot.background = element_rect (fill = 'linen'),
+        panel.background = element_rect (fill = 'tan'), 
+        panel.grid.minor = element_line(linetype = "dotted"),
+        axis.text.x = element_text(face = "bold", color="black" , size = 10, hjust = 1), 
+        axis.text.y = element_text(face = "bold", color="black" , size = 10, hjust = 1),
+        legend.background = element_rect (fill = 'linen'),
+        plot.title =element_text(face = "bold", color="black"))
+
+#Graficar la probabilidad conjunta
+df.prob.conjunta %>%
+  ggplot() + 
+  aes(x = Goles_casa, y = Goles_visitante, fill = Freq) + 
+  geom_tile()+
+  ggtitle("Probabilidad conjunta de goles anotados \n Casa vs Visitante") +
+  scale_fill_gradient(low = "white", high = "green4", name="Probabilidad \n conjunta") +
+  ylab("Goles de casa") +
+  xlab("Goles de visitante") +
+  theme_dark() +
+  theme(plot.title =element_text(face = "bold", color="black", hjust = 0.5),
+        axis.text.x = element_text(face = "bold", color="black" , size = 10, hjust = 1), 
+        axis.text.y = element_text(face = "bold", color="black" , size = 10, hjust = 1),
+        axis.title.x = element_text(face = "bold", color="black" , size = 12, hjust = 0.5),
+        axis.title.y = element_text(face = "bold", color="black" , size = 12, hjust = 0.5),
+        legend.title = element_text(face = "bold", color="black" , size = 10, hjust = 0.5))
+
+#Fin del postwork 3
+#Importar y leer el archivo resultado del postwork 2; datos de la liga espaÃ±ola de futbol
+Fut.ligaEsp <- read.csv("Fut.ligaEsp.Postwork2.csv")
+View(Fut.ligaEsp)
+dim(Fut.ligaEsp)
+#Encontrar la probabilidad marginal de que la casa anote "x" goles a partir de las frec. relativas
+Frec.abs.FTH <- table(Fut.ligaEsp$FTHG) #Frecuencias absolutas
+(pmarg.golesCasa <- c(prop.table(Frec.abs.FTHG))) #Probabilidades marginales
+
+#Encontrar la probabilidad marginal de que el visitante anote "y" goles a partir de las frec. relativas
+Frec.abs.FTAG <- table(Fut.ligaEsp$FTAG) #Frecuencias absolutas
+(pmarg.golesVisitante <- c(prop.table(Frec.abs.FTAG))) #Probabilidades marginales
+
+#Encontrar probabilidad conjunta de que la casa anote "x" goles y el visitante "y" goles
+Frec.abs.ambos <- table(Fut.ligaEsp$FTHG, Fut.ligaEsp$FTAG)
+(prob.conjunta <- prop.table(Frec.abs.ambos)) #Probabilidades conjunta
+
+#######Obter una tabla de cocientes#######
+#Dividimos las probabilidades conjuntas por el producto de las probabilidades marginales correspondientes.
+#Calculamos el producto de probabilidades marginales
+produto.pmarginales <- pmarg.golesCasa%*%t(pmarg.golesVisitante)
+produto.pmarginales
+#Calculamos el cociente de la probabilidad conjunta sobre el producto de probabilidades marginales
+(cociente <- prob.conjunta/produto.pmarginales)
+dim(cociente)
+
+
+#######Hacemos un bootstrap para generar datos######## 
+#Usamos replace para que se permitan valores repetidos
+set.seed(52)
+(bootstrap <- replicate(n=10, sample(cociente, replace = TRUE)))
+dim(bootstrap)
+
+
+#######Sacamos la media y la varianza para cada uno de los 63 cocientes########
+(medias <- apply(bootstrap, MARGIN = 1, FUN = mean))
+(varianzas <- apply(bootstrap, MARGIN = 1, FUN = var))
+#Y los convertimos a formato matriz
+(medias <- matrix(medias, nrow = 9, ncol = 7))
+(varianzas <- matrix(varianzas, nrow = 9, ncol = 7))
+
+
+#######Calculo estadÃ­stico de prueba para una muestra grande.########
+#H0: Mu=1
+#Ha: Mu!=1
+#Calculamos el estadistico de prueba para los valores de los cocientes
+#Usamos la varianza obtenida a partir de bootstrap
+(z0 <- (cociente-1)/sqrt(varianzas/63))
+#Y para comparar, calculamos tambien el estadistico de prueba es uno para cada uno de los 63 cocientes del bootstrap.
+(z0b <- (medias-1)/sqrt(varianzas/63))
+
+
+#######Encontrar region de rechazo para dos colas porque la hipotesis alternativa es Mu!=1##########
+#Queremos que alfa=0.1. Dividimos alfa/2=0.05. Sacamos z05 para ambas colas
+(z.05.arriba <- qnorm(p = 0.05, lower.tail = FALSE)) #z0 tiene que ser mas alta que z.05.arriba 
+(z.05.abajo <- qnorm(p = 0.05, lower.tail = TRUE)) #z0 tiene que ser mas baja que z.05.abajo
+
+
+#######Comprobar o rechazar hipotesis nula de que los valores de los cocientes son iguales a 1##########
+#Region de rechazo de hipotesis nula Z0 > z.05.arriba o Z0 < z.05.abajo
+(rechazo.cociente <- (z0 > z.05.arriba) | (z0 < z.05.abajo)) #Los valores de la primer tabal cocientes tiene que ser mas baja que z.05.abajo 
+#o mas grandes que z.05.arriba 
+(rechazo.samples <- (z0b > z.05.arriba) | (z0b < z.05.abajo)) #Comparamos con las medias del bootstrap
+
+#Los valores TRUE nos indican en que casos se rechaza la hipotesis nula, es decir que
+#existe una dependencia entre las variables "x" y "y"
+
+#Los valores FALSE nos indican en que casos que no se rechaza H0, es decir que
+#las variables "x" y "y" son independientes
