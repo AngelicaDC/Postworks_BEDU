@@ -90,7 +90,7 @@ library(dplyr)
 library(ggplot2)
 
 #Importar y leer el archivo resultado del postwork 2; datos de la liga espaÃ±ola de futbol
-Fut.ligaEsp <- read.csv("https://raw.githubusercontent.com/AngelicaDC/Postworks_BEDU/main/Fut.ligaEsp.Postwork2.csv")
+Fut.ligaEsp <- read.csv("https://raw.githubusercontent.com/AngelicaDC/Postworks_BEDU/main/data/Fut.ligaEsp.Postwork2.csv")
 str(Fut.ligaEsp)
 
 #Goles anotados por los equipos que jugaron en casa (FTHG) y los visitantes (FTAG)
@@ -179,7 +179,7 @@ df.prob.conjunta %>%
 
 #Fin del postwork 3
 #Importar y leer el archivo resultado del postwork 2; datos de la liga espaÃ±ola de futbol
-Fut.ligaEsp <- read.csv("https://raw.githubusercontent.com/AngelicaDC/Postworks_BEDU/main/Fut.ligaEsp.Postwork2.csv")
+Fut.ligaEsp <- read.csv("https://raw.githubusercontent.com/AngelicaDC/Postworks_BEDU/main/data/Fut.ligaEsp.Postwork2.csv")
 View(Fut.ligaEsp)
 dim(Fut.ligaEsp)
 #Encontrar la probabilidad marginal de que la casa anote "x" goles a partir de las frec. relativas
