@@ -1,2 +1,25 @@
-# Postworks_BEDU
-En este repositorio están guardados los postwork de las sesiones 1 a 4 del módulo de R
+# Postworks BEDU
+En este es el repositorio del equipo 14, en donde están guardados los postwork de las sesiones del módulo de R en el programa de Data Science de Bedu/Santander.
+
+![Banner](https://media.giphy.com/media/7c8QeB0VMddFOuu4iR/giphy.gif?style=centerme)
+
+## Entregas
+Las entregas de los postwork se encuentran agrupadas en dos partes:
+
+- [Primera entrega](postWorks_1eraEtapa.R)
+- [Segunda entrega](https://github.com/AngelicaDC/Postworks_BEDU)
+
+## Equipo 14
+![Integrantes](https://media.giphy.com/media/DhstvI3zZ598Nb1rFf/giphy.gif)
+- [Angelica Domínguez Cabello](https://github.com/AngelicaDC)
+- [Erick Manuel Arroyo Gonzalez](https://github.com/Erick-INCS)
+- [Ignacio Díaz Romero](https://github.com/Forever-D14)
+- [José Daniel Rosas Avila](https://github.com/DanielR59)
+- [José de Jesús Becerra Burguete](https://github.com/Burguete9)
+- [Rubén Alejandro Martinez Pérez](https://github.com/AngelicaDC/Postworks_BEDU)
+
+
+img[src$="centerme"] {
+  display:block;
+  margin: 0 auto;
+}
