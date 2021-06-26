@@ -67,7 +67,7 @@ for (i in 1:length(frec.rel.goles.visitante)) {
 > 
 > La probabilidad marginal de que el vistitante anote 6 goles es:  0.00526315789473684
 
-Tabla de probabilidad conjunto de "x" goles del equipo de casa vs "y" goles del visitante
+Tabla de probabilidad conjunto de `x` goles del equipo de casa vs `y` goles del visitante
 ```R
 print("La probabilidad conjunta de que el equipo de casa anote 'x' goles y el equivo visitante anote 'y' goles estÃ¡ representada en la tabla:")
 (frec.rel.goles <- prop.table(frec.goles))
@@ -310,19 +310,19 @@ str(Fut.ligaEsp)
 
 Goles anotados por los equipos que jugaron en casa (FTHG) y los visitantes (FTAG)
 
-Encontrar la probabilidad marginal de que la casa anote "x" goles a partir de las frec. relativas
+Encontrar la probabilidad marginal de que la casa anote `x` goles a partir de las frec. relativas
 ```R
 Frec.abs.FTHG <- table(Fut.ligaEsp$FTHG) #Frecuencias absolutas
 pmarg.golesCasa <- prop.table(Frec.abs.FTHG) #Probabilidades marginales
 ```
 
-Encontrar la probabilidad marginal de que el visitante anote "y" goles a partir de las frec. relativas
+Encontrar la probabilidad marginal de que el visitante anote `y` goles a partir de las frec. relativas
 ```R
 Frec.abs.FTAG <- table(Fut.ligaEsp$FTAG) #Frecuencias absolutas
 pmarg.golesVisitante <- prop.table(Frec.abs.FTAG) #Probabilidades marginales
 ```
 
-Encontrar probabilidad conjunta de que la casa anote "x" goles y el visitante "y" goles
+Encontrar probabilidad conjunta de que la casa anote `x` goles y el visitante `y` goles
 ```R
 Frec.abs.ambos <- table(Fut.ligaEsp$FTHG, Fut.ligaEsp$FTAG)
 prob.conjunta <- prop.table(Frec.abs.ambos) #Probabilidades conjunta
@@ -405,7 +405,7 @@ dim(Fut.ligaEsp)
 > [1] 1140    6
 ```
 
-Encontrar la probabilidad marginal de que la casa anote "x" goles a partir de las frec. relativas
+Encontrar la probabilidad marginal de que la casa anote `x` goles a partir de las frec. relativas
 ```R
 Frec.abs.FTH <- table(Fut.ligaEsp$FTHG) #Frecuencias absolutas
 (pmarg.golesCasa <- c(prop.table(Frec.abs.FTHG))) #Probabilidades marginales
@@ -415,7 +415,7 @@ Frec.abs.FTH <- table(Fut.ligaEsp$FTHG) #Frecuencias absolutas
 0.232456140 0.327192982 0.266666667 0.112280702 0.035087719 0.019298246 0.005263158 0.000877193 0.000877193 
 ```
 
-Encontrar la probabilidad marginal de que el visitante anote "y" goles a partir de las frec. relativas
+Encontrar la probabilidad marginal de que el visitante anote `y` goles a partir de las frec. relativas
 ```R
 Frec.abs.FTAG <- table(Fut.ligaEsp$FTAG) #Frecuencias absolutas
 (pmarg.golesVisitante <- c(prop.table(Frec.abs.FTAG))) #Probabilidades marginales
@@ -425,7 +425,7 @@ Frec.abs.FTAG <- table(Fut.ligaEsp$FTAG) #Frecuencias absolutas
 0.351754386 0.340350877 0.212280702 0.054385965 0.028947368 0.009649123 0.002631579 
 ```
 
-Encontrar probabilidad conjunta de que la casa anote "x" goles y el visitante "y" goles
+Encontrar probabilidad conjunta de que la casa anote `x` goles y el visitante `y` goles
 ```R
 Frec.abs.ambos <- table(Fut.ligaEsp$FTHG, Fut.ligaEsp$FTAG)
 (prob.conjunta <- prop.table(Frec.abs.ambos)) #Probabilidades conjunta
@@ -680,7 +680,10 @@ O mas grandes que `z.05.arriba`
 |[9,]|  TRUE|  TRUE|  TRUE|  TRUE|  TRUE|  TRUE|  TRUE|
 
 
-Los valores `TRUE` nos indican en que casos se rechaza la hipotesis nula, es decir que existe una dependencia entre las variables `x` y `y`
+## Los valores `TRUE` nos indican en que casos se rechaza la hipotesis nula, es decir que existe una dependencia entre las variables `x` y `y`
+## Los valores `FALSE` nos indican en que casos que no se rechaza `H0`, es decir que las variables `x` y `y` son independientes.
 
-Los valores `FALSE` nos indican en que casos que no se rechaza `H0`, es decir que las variables `x` y `y` son independientes.
+> _NOTA_: El código fuente que se muestra en este documento se encuentra [aquí](postWorks_1eraEtapa.R).
 
+
+<p align="center"><img width="300" src="https://media.giphy.com/media/3oEdva9BUHPIs2SkGk/giphy.gif" /></p>
