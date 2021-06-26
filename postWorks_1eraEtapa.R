@@ -90,7 +90,7 @@ library(dplyr)
 library(ggplot2)
 
 #Importar y leer el archivo resultado del postwork 2; datos de la liga espaÃ±ola de futbol
-Fut.ligaEsp <- read.csv("https://raw.githubusercontent.com/AngelicaDC/Postworks_BEDU/main/Fut.ligaEsp.Postwork2.csv")
+Fut.ligaEsp <- read.csv("https://raw.githubusercontent.com/AngelicaDC/Postworks_BEDU/main/data/Fut.ligaEsp.Postwork2.csv")
 str(Fut.ligaEsp)
 
 #Goles anotados por los equipos que jugaron en casa (FTHG) y los visitantes (FTAG)
@@ -125,21 +125,6 @@ sort(df.goles.ambos$Freq)
 
 #Graficar las probabilidades marginales de cada equipo
 
-ggplot(data = pgl, aes(x = Goles, y = Probabilidad)) +
-  geom_col(aes(fill = Goles)) + labs(x = "Goles equipo local", y = "Probabilidad", 
-                                     title = "Probabilidad de número de goles x equipo local") +
-  geom_text(aes(label = paste(round(Probabilidad*100), "%")), vjust = -0.5)
-
-ggplot(data = pgv, aes(x = Goles, y = Probabilidad)) +
-  geom_col(aes(fill = Goles)) + labs(x = "Goles equipo visitante", y = "Probabilidad", 
-                                     title = "Probabilidad de número de goles x equipo visitante") +
-  geom_text(aes(label = paste(round(Probabilidad*100,2), "%")), vjust = -0.5)
-
-ggplot(data = pg, aes(x = Goles_Local, y = Goles_Visitante, fill = Probabilidad)) +
-  geom_tile() + labs(x = "Goles equipo local", y = "Goles equipo visitante", 
-                     title = "Probabilidad de número de goles equipo local x visitante") +
-  geom_text(aes(label = paste(round(Probabilidad*100,2), "%"))) + scale_fill_gradient2(guide = FALSE)
-
 
 df.goles.ambos %>%
   ggplot() + 
@@ -165,8 +150,8 @@ df.prob.conjunta %>%
   geom_tile()+
   ggtitle("Probabilidad conjunta de goles anotados \n Casa vs Visitante") +
   scale_fill_gradient(low = "white", high = "green4", name="Probabilidad \n conjunta") +
-  ylab("Goles de casa") +
-  xlab("Goles de visitante") +
+  xlab("Goles de casa") +
+  ylab("Goles de visitante") +
   theme_dark() +
   theme(plot.title =element_text(face = "bold", color="black", hjust = 0.5),
         axis.text.x = element_text(face = "bold", color="black" , size = 10, hjust = 1), 
@@ -179,7 +164,7 @@ df.prob.conjunta %>%
 
 #Fin del postwork 3
 #Importar y leer el archivo resultado del postwork 2; datos de la liga espaÃ±ola de futbol
-Fut.ligaEsp <- read.csv("https://raw.githubusercontent.com/AngelicaDC/Postworks_BEDU/main/Fut.ligaEsp.Postwork2.csv")
+Fut.ligaEsp <- read.csv("https://raw.githubusercontent.com/AngelicaDC/Postworks_BEDU/main/data/Fut.ligaEsp.Postwork2.csv")
 View(Fut.ligaEsp)
 dim(Fut.ligaEsp)
 #Encontrar la probabilidad marginal de que la casa anote "x" goles a partir de las frec. relativas
@@ -246,3 +231,4 @@ dim(bootstrap)
 
 #Los valores FALSE nos indican en que casos que no se rechaza H0, es decir que
 #las variables "x" y "y" son independientes
+
