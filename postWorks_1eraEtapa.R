@@ -83,7 +83,7 @@ df.todo.final <- do.call(rbind, lista_final)
 str(df.todo.final)
 
 #Guardamos el dataframe final para usarlo en la sesion 3
-write.csv(df.todo.final, file = "Fut.ligaEsp.Postwork2.csv", sep = ",", col.names=TRUE, row.names = FALSE)
+# write.csv(df.todo.final, file = "Fut.ligaEsp.Postwork2.csv", sep = ",", col.names=TRUE, row.names = FALSE)
 
 
 library(dplyr)
@@ -231,4 +231,3 @@ dim(bootstrap)
 
 #Los valores FALSE nos indican en que casos que no se rechaza H0, es decir que
 #las variables "x" y "y" son independientes
-
