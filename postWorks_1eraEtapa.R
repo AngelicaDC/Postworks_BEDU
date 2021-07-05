@@ -191,7 +191,7 @@ dim(cociente)
 #######Hacemos un bootstrap para generar datos######## 
 #Usamos replace para que se permitan valores repetidos
 set.seed(52)
-(bootstrap <- replicate(n=10, sample(cociente, replace = TRUE)))
+(bootstrap <- replicate(n=1000, sample(cociente, replace = TRUE)))
 dim(bootstrap)
 
 
