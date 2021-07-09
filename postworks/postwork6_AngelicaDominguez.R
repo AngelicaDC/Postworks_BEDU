@@ -36,8 +36,7 @@ Ym.periodo <- periodo %>% group_by(Ym) %>%
 Ym.periodo <- Ym.periodo[order(Ym.periodo$Ym), ]
 
 #Creamos la serie de tiempo sólo para el periodo de tiempo con los mismos meses
-(golesMensuales.ts <- ts(Ym.periodo$avg_Ym,start =c(2011), end = c(2019,10), frequency = 10,
-                         names = c("ENERO")))
+(golesMensuales.ts <- ts(Ym.periodo$avg_Ym,start =c(2011), end = c(2019,10), frequency = 10))
 #Graficamos
 #opcion1
 ts.plot(golesMensuales.ts, 
