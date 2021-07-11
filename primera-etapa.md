@@ -31,24 +31,24 @@ for (i in 1:length(frec.rel.goles.casa)) {
     print(
         paste(
             "La probabilidad marginal de que la casa anote",
-            i,"goles es: ", frec.rel.goles.casa[i]
+            i-1,"goles es: ", frec.rel.goles.casa[i]
         )
     )
 }
 ```
-> La probabilidad marginal de que la casa anote 1 goles es:  0.231578947368421
+> La probabilidad marginal de que la casa anote 0 goles es:  0.231578947368421
 > 
-> La probabilidad marginal de que la casa anote 2 goles es:  0.347368421052632
+> La probabilidad marginal de que la casa anote 1 goles es:  0.347368421052632
 > 
-> La probabilidad marginal de que la casa anote 3 goles es:  0.260526315789474
+> La probabilidad marginal de que la casa anote 2 goles es:  0.260526315789474
 > 
-> La probabilidad marginal de que la casa anote 4 goles es:  0.1
+> La probabilidad marginal de que la casa anote 3 goles es:  0.1
 > 
-> La probabilidad marginal de que la casa anote 5 goles es:  0.0368421052631579
+> La probabilidad marginal de que la casa anote 4 goles es:  0.0368421052631579
 > 
-> La probabilidad marginal de que la casa anote 6 goles es:  0.0210526315789474
+> La probabilidad marginal de que la casa anote 5 goles es:  0.0210526315789474
 > 
-> La probabilidad marginal de que la casa anote 7 goles es:  0.00263157894736842
+> La probabilidad marginal de que la casa anote 6 goles es:  0.00263157894736842
 
 ```R
 for (i in 1:length(frec.rel.goles.visitante)) {
