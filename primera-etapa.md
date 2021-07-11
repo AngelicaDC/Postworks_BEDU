@@ -394,7 +394,7 @@ df.prob.conjunta %>%
 <p align="center"><img src="img/prob-casa-vs-visit.png" /></p>
 
 
-### Fin del postwork 3
+### Postwork 4
 Importar y leer el archivo resultado del postwork 2; datos de la liga española de futbol
 ```R
 Fut.ligaEsp <- read.csv("https://raw.githubusercontent.com/AngelicaDC/Postworks_BEDU/main/data/Fut.ligaEsp.Postwork2.csv")
