@@ -18,3 +18,5 @@ diferencia=as.numeric(consulta$home$score)-as.numeric(consulta$away$score)
 
 print(paste("El equipo Real Madrid goleó a su contrincante",consulta$away$team,
             "con una diferencia de",diferencia,"goles"))
+
+m$disconnect()
