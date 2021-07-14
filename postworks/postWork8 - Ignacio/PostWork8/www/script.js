@@ -11,9 +11,7 @@ window.onload = function() {
         i.remove();
     });
     
-    imgContainer.appendChild(nwContainer);
-
-    
+    imgContainer.appendChild(nwContainer); 
 
     console.log(nwContainer.innerHTML);
 }

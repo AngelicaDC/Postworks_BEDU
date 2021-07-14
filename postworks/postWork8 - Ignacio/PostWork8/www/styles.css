@@ -22,3 +22,7 @@ div.row {
     max-width: 571px;
     margin-top: 0.8em;
 }
+
+.box-body #output_plot {
+    height: auto!important;
+}

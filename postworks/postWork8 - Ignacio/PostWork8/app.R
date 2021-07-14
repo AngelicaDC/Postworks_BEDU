@@ -20,13 +20,13 @@ ui <-
         
         dashboardPage(skin = "purple",
                       
-                      dashboardHeader(title = "PostWork8"),
+                      dashboardHeader(title = "PostWork 8"),
                       
                       dashboardSidebar(
                           
                           sidebarMenu(
                               menuItem("Grafica de Barras", tabName = "Barras", icon = icon("bar-chart-o")),
-                              menuItem("Graficas de Postwork3", tabName = "PW3", icon = icon("area-chart")),
+                              menuItem("Graficas de Postwork 3", tabName = "PW3", icon = icon("area-chart")),
                               menuItem("Match Data - DataTable", tabName = "data_table", icon = icon("table")),
                               menuItem("Factores de Ganancia", tabName = "Fact", icon = icon("line-chart"))
                           )
@@ -34,6 +34,10 @@ ui <-
                       ),
                       
                       dashboardBody(
+                          
+                          # Aditivos :D
+                          singleton(tags$head(tags$script(src='script.js'))),
+                          singleton(tags$head(tags$link(rel="stylesheet", type = "text/css", href = "styles.css"))),
                           
                           tabItems(
                               
@@ -53,7 +57,7 @@ ui <-
                               tabItem(tabName = "PW3", 
                                       fluidRow(
                                           box(width = NULL, height = NULL,
-                                              titlePanel(h3("GrÃ¡ficos obtenidos en Postwork3")),
+                                              titlePanel(h3("Graficos obtenidos en Postwork 3")),
                                               img(src = "Barras.png", height = 450, width = 650),
                                               img(src =  "ProbConjunta.png", height = 450, width = 650)
                                           )
