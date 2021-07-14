@@ -35,6 +35,10 @@ ui <-
             
             dashboardBody(
                 
+                # Aditivos :D
+                singleton(tags$head(tags$script(src='script.js'))),
+                singleton(tags$head(tags$link(rel="stylesheet", type = "text/css", href = "styles.css"))),
+                
                 tabItems(
                     
                     # Histograma
@@ -53,9 +57,9 @@ ui <-
                     tabItem(tabName = "PW3", 
                             fluidRow(
                                 box(width = NULL, height = NULL,
-                                titlePanel(h3("Gráficos obtenidos en Postwork3")),
-                                img(src = "Barras.png", height = 450, width = 650),
-                                img(src =  "ProbConjunta.png", height = 450, width = 650)
+                                titlePanel(h3("Gráficos obtenidos en Postwork 3")),
+                                img(src = "Barras.png"),
+                                img(src =  "ProbConjunta.png")
                                 )
                             )
                     ),
@@ -92,7 +96,7 @@ ui <-
 
 server <- function(input, output) {
     library(ggplot2)
-    setwd("C:/DataScienceBEDU/Sesion08/Postwork08")
+    setwd("/HDD/Learning/Bedu/Postworks_BEDU/postworks/postWork8 - Ignacio/PostWork8/")
     data <- read.csv("data/match.data.csv")
     
     
