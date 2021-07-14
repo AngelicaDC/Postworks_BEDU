@@ -194,7 +194,7 @@ df_hv= paste(Fut.ligaEsp$FTHG, Fut.ligaEsp$FTAG)
 class(df_hv)
 df_hv
 
-bhv = replicate(n=10, sample(df_hv, replace = TRUE))
+bhv = replicate(n=1000, sample(df_hv, replace = TRUE))
 bhv
 
 reformat <- function(s) {
@@ -236,23 +236,26 @@ for (i in 1:dim(visita)[2]) {
   cocientes.list[[i]]=cociente.sample
 }
 
-cocientes.list[[]]
+cocientes.list[[1]]
 
+dataFrames <- lapply(cocientes.list, as.data.frame)
+cocientes.list[[1]]
+as.data.frame(cocientes.list[[1]])
+
+SuperDataFrame <- Reduce(function(x, y) merge(x, y, by=c("Var1","Var2"),all=TRUE), dataFrames)
+#SuperDataFrame
+#str(SuperDataFrame)
+
+SuperDataFrame$Medias <- rowMeans(SuperDataFrame[,3:1002],na.rm=TRUE)
+SuperDataFrame$sd<- apply(SuperDataFrame[,3:1002], 1, sd,na.rm=TRUE)
+SuperDataFrame$varianza <- SuperDataFrame$sd**2
+
+#SuperDataFrame
+library(dplyr)
+
+chiquito <- select(SuperDataFrame,c("Var1","Var2","Medias","varianza"))
 attach(publi)
-for (i in 1:cocientes.list) {
-  
-  
-}
 
-row.names(cocientes.list[[1]])
-
-cocientes.list
-medias <- apply(cocientes.list, FUN = mean)
-dim(medias)
-mean(c(NULL,1,3,5))
-dim(cociente.sample)
-prod.marg
-pmargCon
 #####################################################################################################################3
 #######Hacemos un bootstrap para generar datos######## 
 #Usamos replace para que se permitan valores repetidos
@@ -271,7 +274,9 @@ length(bv[[1]])
 (medias <- matrix(medias, nrow = 9, ncol = 7))
 (varianzas <- matrix(varianzas, nrow = 9, ncol = 7))
 
-
+###################
+medias <- chiquito$Medias
+varianzas <- chiquito$varianza
 #######Calculo estadistico de prueba para una muestra grande.########
 #H0: Mu=1
 #Ha: Mu!=1
@@ -280,19 +285,23 @@ length(bv[[1]])
 (z0 <- (cociente-1)/sqrt(varianzas/63))
 #Y para comparar, calculamos tambien el estadistico de prueba es uno para cada uno de los 63 cocientes del bootstrap.
 (z0b <- (medias-1)/sqrt(varianzas/63))
-
+z0b
+dim(z0)
+dim(z0b)
+z0b <- t(matrix(z0b, nrow = 7, ncol = 9))
+z0b
 
 #######Encontrar region de rechazo para dos colas porque la hipotesis alternativa es Mu!=1##########
 #Queremos que alfa=0.1. Dividimos alfa/2=0.05. Sacamos z05 para ambas colas
-(z.05.arriba <- qnorm(p = 0.05, lower.tail = FALSE)) #z0 tiene que ser mas alta que z.05.arriba 
-(z.05.abajo <- qnorm(p = 0.05, lower.tail = TRUE)) #z0 tiene que ser mas baja que z.05.abajo
+(z.025.arriba <- qnorm(p = 0.025, lower.tail = FALSE)) #z0 tiene que ser mas alta que z.05.arriba 
+(z.025.abajo <- qnorm(p = 0.025, lower.tail = TRUE)) #z0 tiene que ser mas baja que z.05.abajo
 
 
 #######Comprobar o rechazar hipotesis nula de que los valores de los cocientes son iguales a 1##########
 #Region de rechazo de hipotesis nula Z0 > z.05.arriba o Z0 < z.05.abajo
-(rechazo.cociente <- (z0 > z.05.arriba) | (z0 < z.05.abajo)) #Los valores de la primer tabal cocientes tiene que ser mas baja que z.05.abajo 
+(rechazo.cociente <- (z0 > z.025.arriba) | (z0 < z.025.abajo)) #Los valores de la primer tabal cocientes tiene que ser mas baja que z.05.abajo 
 #o mas grandes que z.05.arriba 
-(rechazo.samples <- (z0b > z.05.arriba) | (z0b < z.05.abajo)) #Comparamos con las medias del bootstrap
+(rechazo.samples <- (z0b > z.025.arriba) | (z0b < z.025.abajo)) #Comparamos con las medias del bootstrap
 
 #Los valores TRUE nos indican en que casos se rechaza la hipotesis nula, es decir que
 #existe una dependencia entre las variables "x" y "y"
