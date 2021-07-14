@@ -65,7 +65,7 @@ length(lista_columnas) #La lista contiene 3 elementos que son un dataframe de la
 str(data.frame(lista_columnas[1]))
 str(data.frame(lista_columnas[2]))
 str(data.frame(lista_columnas[3]))
-
+  
 #La columa "Date" de los dataframes es de clase caracter. Debemos de cambiarla a clase Date
 #El formato es diferente para cada dataframe
 tmp2017.2018.dfcols <- mutate(data.frame(lista_columnas[1]), Date = as.Date(Date, "%d/%m/%y"))
@@ -344,15 +344,8 @@ df.pred.vs.real
 #     2. Ath Madrid (casa) y Sociedad (visitante) quedaron empates;
 #     3. Leganes (casa) y Real Madrid (visitante) quedaron empates;
 
-
-
-
 str(ranking)
 str(prediccion)
-
-#Hacer prueba de hipotesis de si la probabilidad de que un equipo gane es la misma que la del otro.
-#Buscar si hay valores nulos "Missing scores must be denoted NaN."
-#The function uses Dixon and Coles time-weighted poisson model to estimate attack and defense strengths using the glm function.
 
 ###############################################################################################################################
 #PostWork6
@@ -386,7 +379,7 @@ View(MES)
 #Primero solo nos quedamos con el periodo que nos interesa 
 #y quitamos los meses que no tienen registros en todos los años del periodo (junio y julio)
 #Tambien quitamos los años que no tengan todos los meses (2010)
-periodo <- subset(match.data, (Ym >= "2011-01" & Ym <= "2019-12"))
+periodo <- subset(match.data, (Ym >= "2010-08" & Ym <= "2019-05"))
 periodo <- subset(periodo, (mes!= "junio" & mes!="julio"))
 
 ##Ahora calculamos el promedio por mes por año del periodo que nos interesa
@@ -396,19 +389,26 @@ Ym.periodo <- periodo %>% group_by(Ym) %>%
 Ym.periodo <- Ym.periodo[order(Ym.periodo$Ym), ]
 
 #Creamos la serie de tiempo sólo para el periodo de tiempo con los mismos meses
-(golesMensuales.ts <- ts(Ym.periodo$avg_Ym,start =c(2011,1), end = c(2019,10), frequency = 10))
+#Se inicia en Agosto del 2010 y termina en mayo de 2019 para tener temporadas completas
+(golesMensuales.ts <- ts(Ym.periodo$avg_Ym,start =c(2010,8), end = c(2019,05), frequency = 10))
 
-#opcion1
-ts.plot(golesMensuales.ts, 
-        main = "Promedio de Goles por Mes", 
-        xlab = "Tiempo",
-        sub = "Enero de 2011 - Diciembre de 2019, exceptuando los meses de junio y julio")
 
-#opcion2
-autoplot(golesMensuales.ts,linetype = 'solid', colour = 'blue',
-         main	= "Promedio de Goles por Mes",
-         xlab = "Tiempo\n Enero de 2011 a Diciembre de 2019, exceptuando los meses de junio y julio",
-         ylab = "Promedio de goles")
+#Graficamos la seri de tiempo
+ts_info(golesMensuales.ts)
+autoplot(stl(golesMensuales.ts, s.window = "periodic"), ts.colour="blue")
+#Descomponemos la serie
+(golesMensuales.decom.A <- decompose(golesMensuales.ts))
+str(golesMensuales.decom.A)
+#Juntamos la serie de tiempo mas su componente estacional para graficarlas juntas
+df=cbind(Goles_Mes=golesMensuales.ts, Comp_Estacional=golesMensuales.decom.A$seasonal)
+ts_plot(df,
+        title = "Promedio de Goles por Mes",
+        Xtitle = "Tiempo\n Agosto de 2010 a Mayo de 2019,\n exceptuando los meses de junio y julio",
+        Ytitle = NULL,
+        line.mode =  "lines+markers",
+        Xgrid = TRUE,
+        Ygrid = TRUE,
+        type = "multiple")
 
 #######################################################################
 #PostWork7
