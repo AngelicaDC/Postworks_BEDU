@@ -25,7 +25,7 @@ for (i in 1:length(frec.rel.goles.visitante)) {
 }
 
 #Tabla de probabilidad conjunto de "x" goles del equipo de casa vs "y" goles del visitante
-print("La probabilidad conjunta de que el equipo de casa anote 'x' goles y el equivo visitante anote 'y' goles estÃ¡ representada en la tabla:")
+print("La probabilidad conjunta de que el equipo de casa anote 'x' goles y el equivo visitante anote 'y' goles está representada en la tabla:")
 (frec.rel.goles <- prop.table(frec.goles))
 
 #Postwork sesion 2
@@ -85,7 +85,6 @@ str(df.todo.final)
 #Guardamos el dataframe final para usarlo en la sesion 3
 ##write.csv(df.todo.final, file = "Fut.ligaEsp.Postwork2.csv", sep = ",", col.names=TRUE, row.names = FALSE)
 
-library(dplyr)
 library(ggplot2)
 
 #Importar y leer el archivo resultado del postwork 2; datos de la liga espaÃ±ola de futbol
@@ -189,13 +188,15 @@ dim(cociente)
 
 
 #######################################################################################################################
-
+#Generaci?n de boostrap sobre los datos
+#######Hacemos un bootstrap para generar datos######## 
+#Usamos replace para que se permitan valores repetidoss
 df_hv= paste(Fut.ligaEsp$FTHG, Fut.ligaEsp$FTAG)
 class(df_hv)
 df_hv
-
+#Generamos s1000 muestras
 bhv = replicate(n=1000, sample(df_hv, replace = TRUE))
-bhv
+#bhv
 
 reformat <- function(s) {
   unlist(lapply(strsplit(s, ' '), strtoi))
@@ -204,43 +205,36 @@ reformat <- function(s) {
 ref=apply(bhv, 1, reformat)
 
 View(ref)
-bhv[[11400]]
-
 class(bhv)
 dim(ref)
 
-nones=seq(1,dim(ref)[1],2)
-pares=seq(2,dim(ref)[1],2)
+nones <- seq(1,dim(ref)[1],2)
+pares <- seq(2,dim(ref)[1],2)
 
-casa=as.matrix(ref[nones,])
-casa=t(casa)
+casa <- as.matrix(ref[nones,])
+casa <- t(casa)
 
-table(casa[,1])
-visita=as.matrix(ref[pares,])
-visita=t(visita)
+visita <- as.matrix(ref[pares,])
+visita <- t(visita)
 dim(visita)
 
-cocientes.list = list()
+cocientes.list <-  list()
 for (i in 1:dim(visita)[2]) {
-  dfi=cbind(casa[,i],visita[,i])
+  dfi <- cbind(casa[,i],visita[,i])
   #Sacamos frecuencias absolutas y probabilidades marginales
   fabsH=table(casa[,i])
-  pmargH=c(prop.table(fabsH))
-  fabsV=table(visita[,i])
-  pmargV=c(prop.table(fabsV))
+  pmargH <- c(prop.table(fabsH))
+  fabsV <- table(visita[,i])
+  pmargV <- c(prop.table(fabsV))
   #Sacamos la probabilidad conjunta
-  fabsCon=table(dfi[,1],dfi[,2])
-  pCon=prop.table(fabsCon)
+  fabsCon <- table(dfi[,1],dfi[,2])
+  pCon <- prop.table(fabsCon)
   prod.marg <- pmargH%*%t(pmargV)
   cociente.sample <- pCon/prod.marg
-  cocientes.list[[i]]=cociente.sample
+  cocientes.list[[i]] <- cociente.sample
 }
 
-cocientes.list[[1]]
-
 dataFrames <- lapply(cocientes.list, as.data.frame)
-cocientes.list[[1]]
-as.data.frame(cocientes.list[[1]])
 
 SuperDataFrame <- Reduce(function(x, y) merge(x, y, by=c("Var1","Var2"),all=TRUE), dataFrames)
 #SuperDataFrame
@@ -250,33 +244,14 @@ SuperDataFrame$Medias <- rowMeans(SuperDataFrame[,3:1002],na.rm=TRUE)
 SuperDataFrame$sd<- apply(SuperDataFrame[,3:1002], 1, sd,na.rm=TRUE)
 SuperDataFrame$varianza <- SuperDataFrame$sd**2
 
-#SuperDataFrame
-library(dplyr)
-
 chiquito <- select(SuperDataFrame,c("Var1","Var2","Medias","varianza"))
-attach(publi)
 
-#####################################################################################################################3
-#######Hacemos un bootstrap para generar datos######## 
-#Usamos replace para que se permitan valores repetidos
-set.seed(52)
-(bootstrap <- replicate(n=1000, sample(cociente, replace = TRUE)))
-
-dim(bootstrap)
-bv[1]
-length(bv[[1]])
-
+#####################################################################################################################
 
 #######Sacamos la media y la varianza para cada uno de los 63 cocientes########
-(medias <- apply(bootstrap, MARGIN = 1, FUN = mean))
-(varianzas <- apply(bootstrap, MARGIN = 1, FUN = var))
-#Y los convertimos a formato matriz
-(medias <- matrix(medias, nrow = 9, ncol = 7))
-(varianzas <- matrix(varianzas, nrow = 9, ncol = 7))
-
-###################
 medias <- chiquito$Medias
 varianzas <- chiquito$varianza
+###################
 #######Calculo estadistico de prueba para una muestra grande.########
 #H0: Mu=1
 #Ha: Mu!=1
@@ -285,11 +260,8 @@ varianzas <- chiquito$varianza
 (z0 <- (cociente-1)/sqrt(varianzas/63))
 #Y para comparar, calculamos tambien el estadistico de prueba es uno para cada uno de los 63 cocientes del bootstrap.
 (z0b <- (medias-1)/sqrt(varianzas/63))
-z0b
-dim(z0)
-dim(z0b)
+#Reorganizamos z0b
 z0b <- t(matrix(z0b, nrow = 7, ncol = 9))
-z0b
 
 #######Encontrar region de rechazo para dos colas porque la hipotesis alternativa es Mu!=1##########
 #Queremos que alfa=0.1. Dividimos alfa/2=0.05. Sacamos z05 para ambas colas
