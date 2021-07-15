@@ -2,7 +2,7 @@
 
 A continuacion se muestra el procedimiento utilizado para cumplir con todos los puntos planteados dentro de los postworks de la 5ta a la 8va sesión.
 
-## Postwork 7
+## Postwork 5
 ```R
 library(fbRanks)
 library(dplyr)
