@@ -2,7 +2,7 @@
 A lo largo del curso estuvimos trabajando con datos de los partidos de la liga española de fútbol en diferentes temporadas. Estos datasets contienen información como la fecha en la que se jugaron los partidos, los equipos que jugaron de casa y visitante, así como El número  de goles anotados por el equipo de casa y el visitante en cada partido.
 
 # Primera Etapa
-A continuacion se muestra el procedimiento utilizado para cumplir con todos los puntos planteados dentro de los postworks de la 1ra a la 4ta sesión.
+A continuacion se muestra el procedimiento utilizado para cumplir con todos los puntos planteados dentro de los postworks.
 
 ## Postwork sesion 1
 Aprendimos a usar la función `read.csv` para importar y leer un archivo separado por comas. Con ayuda de la función table encontramos las probabilidades marginales y conjuntas de que los equipos de casa y visitante anotarán un número determinado de goles.
