@@ -492,135 +492,208 @@ dim(cociente)
 
 > [1] 9 7
 ```
-
-#### Hacemos un bootstrap para generar datos 
-Usamos replace para que se permitan valores repetidos
+### Generación de boostrap sobre los datos
+Hacemos un bootstrap para generar datos y usamos replace para que se permitan valores repetidos
 ```R
-set.seed(52)
-(bootstrap <- replicate(n=10, sample(cociente, replace = TRUE)))
-dim(bootstrap)
+df_hv= paste(Fut.ligaEsp$FTHG, Fut.ligaEsp$FTAG)
+class(df_hv)
+df_hv
 ```
+`[1] "character"`
 ```
-           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]      [,8]      [,9]     [,10]
- [1,] 0.0000000 0.0000000 1.0706236 0.0000000 0.0000000 0.0000000 1.0304752 0.7862903 0.0000000 0.9547829
+> df_hv
+   [1] "1 0" "1 0" "2 3" "2 2" "1 1" "0 0" "2 0" "0 3" "1 0" "0 1" "2 1" "3 0" "0 2"
 ...
-[63,] 0.5556910 1.5702479 0.0000000 0.9859033 1.0055444 1.0304752 1.0847107 1.0341495 0.7862903 0.8814433
-```
-```
-> [1] 63 10
+ [989] "2 1" "2 3" "2 2" "1 0" "2 1" "2 1" "2 1" "2 2" "0 0" "0 1" "2 2" "3 3"
+ [ reached getOption("max.print") -- omitted 140 entries ]
 ```
 
-#### Sacamos la media y la varianza para cada uno de los 63 cocientes
+Generamos 1000 muestras
+
 ```R
-(medias <- apply(bootstrap, MARGIN = 1, FUN = mean))
+set.seed(12345)
+bhv = replicate(n=1000, sample(df_hv, replace = TRUE))
+#bhv
 ```
-```
-[1] 0.3842172 0.7013610 0.5517611 1.6109840 0.4232022 0.5474264 1.4037280 1.0211746
-....
-[61] 1.0062654 0.4393071 0.8934456
+
+Se utiliza la siguiente funcion para empaquetar los resultados de los partidos.
+
+```R
+reformat <- function(s) {
+  unlist(lapply(strsplit(s, ' '), strtoi))
+}
 ```
 ```R
-(varianzas <- apply(bootstrap, MARGIN = 1, FUN = var))
+ref=apply(bhv, 1, reformat)
+
+View(ref)
+class(bhv)
+dim(ref)
 ```
+||v1|v2|v3|...|
+|-|-|-|-|-|
+|1|0|1|0||
+|1|0|2|1||
+|...|||||
 ```
- [1] 0.2513054 0.2549066 0.8844698 2.6849492 0.2989145 0.2275060 2.5615868 0.7134575 3.2043279 0.8291219 0.9134934 0.8830388
-...
-[61] 0.9029202 0.3412171 0.1642536
+> class(bhv)
+[1] "matrix" "array"
+> dim(ref)
+[1] 2000 1140 
 ```
 
-Y los convertimos a formato matriz
 ```R
-(medias <- matrix(medias, nrow = 9, ncol = 7))
-(varianzas <- matrix(varianzas, nrow = 9, ncol = 7))
+nones <- seq(1,dim(ref)[1],2)
+pares <- seq(2,dim(ref)[1],2)
+
+casa <- as.matrix(ref[nones,])
+casa <- t(casa)
+
+visita <- as.matrix(ref[pares,])
+visita <- t(visita)
+dim(visita)
 ```
 ```
-           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
- [1,] 0.2513054 0.8291219 0.3611043 0.9923537 1.8256371 0.3286291 0.2760714
- [2,] 0.2549066 0.9134934 0.8053723 0.3673276 0.8113255 0.3405729 0.9378178
- [3,] 0.8844698 0.8830388 0.8621120 1.2867375 0.4638121 0.4773409 0.3542384
- [4,] 2.6849492 1.4955013 0.5442545 1.0114142 0.3814934 2.0910316 1.4806174
- [5,] 0.2989145 0.3775208 1.1920885 3.4187267 0.8945184 1.2129402 1.1524027
- [6,] 0.2275060 1.1582626 0.2860759 0.2931550 0.1845271 0.5655591 0.4524549
- [7,] 2.5615868 0.3171602 0.2329543 0.9841421 0.3178651 0.3057011 0.9029202
- [8,] 0.7134575 0.9321624 0.9313782 1.1915777 1.6967469 2.1819950 0.3412171
- [9,] 3.2043279 0.8808224 0.4130167 1.0193859 0.9023203 1.0094015 0.1642536
+[1] 1140 1000
 ```
 
-#### Calculo estadistico de prueba para una muestra grande.
-> H0: Mu=1
-> 
-> Ha: Mu!=1
+```R
+cocientes.list <-  list()
+for (i in 1:dim(visita)[2]) {
+  dfi <- cbind(casa[,i],visita[,i])
+  #Sacamos frecuencias absolutas y probabilidades marginales
+  fabsH=table(casa[,i])
+  pmargH <- c(prop.table(fabsH))
+  fabsV <- table(visita[,i])
+  pmargV <- c(prop.table(fabsV))
+  #Sacamos la probabilidad conjunta
+  fabsCon <- table(dfi[,1],dfi[,2])
+  pCon <- prop.table(fabsCon)
+  prod.marg <- pmargH%*%t(pmargV)
+  cociente.sample <- pCon/prod.marg
+  cocientes.list[[i]] <- cociente.sample
+}
 
-Calculamos el estadistico de prueba para los valores de los cocientes
+dataFrames <- lapply(cocientes.list, as.data.frame)
+
+SuperDataFrame <- Reduce(function(x, y) merge(x, y, by=c("Var1","Var2"),all=TRUE), dataFrames)
+#SuperDataFrame
+#str(SuperDataFrame)
+
+SuperDataFrame$Medias <- rowMeans(SuperDataFrame[,3:1002],na.rm=TRUE)
+SuperDataFrame$sd<- apply(SuperDataFrame[,3:1002], 1, sd,na.rm=TRUE)
+SuperDataFrame$varianza <- SuperDataFrame$sd**2
+
+chiquito <- select(SuperDataFrame,c("Var1","Var2","Medias","varianza"))
+```
+|Var1| Var2|    Medias|    varianza|
+|-|-|-|-|
+|1     |0|    0| 0.9599280| 0.005308736|
+|2     |0|    1| 1.0228705| 0.005549046|
+|3     |0|    2| 0.9188134| 0.009232376|
+|4     |0|    3| 1.4293345| 0.066867590|
+|5     |0|    4| 0.7862167| 0.081905245|
+|6     |0|    5| 1.9274841| 0.476490580|
+|7     |0|    6| 0.0000000| 0.000000000|
+|8     |1|    0| 1.0035822| 0.003219892|
+|...|||||
+
+Sacamos la media y la varianza para cada uno de los 63 cocientes
+```R
+medias <- chiquito$Medias
+varianzas <- chiquito$varianza
+```
+
+Calculo estadistico de prueba para una muestra grande.
+### H0: Mu=1
+### Ha: Mu!=1
+
+Calculamos el estadistico de prueba para los valores de los cocientes.
 Usamos la varianza obtenida a partir de bootstrap
+
 ```R
 (z0 <- (cociente-1)/sqrt(varianzas/63))
 ```
 ```
                0            1            2            3            4            5            6
-  0  -0.71593327   0.17464281  -0.99892863   3.64199544  -1.27967066  13.22829601 -15.10634984
-  1   0.09533093   0.26487612  -0.13188420  -0.18461228  -0.65074948  -6.04296936  -8.19617151
-  2  -0.54721468   0.28844601   0.72414731  -1.49537284   1.58927054  -3.65536969  20.00385573
-  3   0.64286907  -0.97806780   0.32788075   0.04375793  -5.91424201   3.39941199  12.84219992
-  4   1.99120085  -1.53153155  -0.42056072  -4.29277460  20.59902727  -7.20693470  -7.39380741
-  5   4.86283646  -1.46533928   1.04804375 -14.65958349  10.53668289 -10.55434447 -11.80001621
-  6   2.09005668  -0.29059573 -16.44503857  16.51808293 -14.07825501 -14.35561394  -8.35305988
-  7  -9.39693468  15.93347851  -8.22445715  -7.27125033  -6.09342883  -5.37332854 -13.58797911
-  8  -4.43406239  -8.45719037  45.82974403  -7.86141947  -8.35583590  -7.90020408 -19.58451420
+  0   -4.9258122    1.9625216   -1.9882483    1.3016450   -6.1252698    2.4871799         -Inf
+  1    0.6461230    1.4197815   -0.2444047   -0.5041213   -1.3401534         -Inf         -Inf
+  2   -5.3560238    1.1025246    0.5704791   -8.0615523          Inf         -Inf          Inf
+  3    4.0736408   -3.1726911    2.0874013    0.1490621   -2.2369492          Inf  125.6324130
+  4    3.8039319         -Inf   -4.1437735         -Inf          Inf         -Inf         -Inf
+  5    3.3601524  -23.6414712    3.3680419   -4.8515613          Inf         -Inf         -Inf
+  6          Inf   -2.4196671  -23.0240719          Inf  -12.5952724  -29.4831256         -Inf
+  7 -139.8780603  163.0327416  -20.6280892         -Inf  -12.9309968         -Inf         -Inf
+  8 -139.5223199  -40.6748732   26.8321666  -25.4921159         -Inf         -Inf         -Inf
 ```
-
 Y para comparar, calculamos tambien el estadistico de prueba es uno para cada uno de los 63 cocientes del bootstrap.
 
 ```R
 (z0b <- (medias-1)/sqrt(varianzas/63))
 ```
-
-#### Encontrar region de rechazo para dos colas porque la hipotesis alternativa es `Mu!=1`
-Queremos que `alfa=0.1`. Dividimos `alfa/2=0.05`. Sacamos `z05` para ambas colas
-
+```
+[1]  -4.3653119   2.4368981  -6.7065292  13.1782642  -5.9290912  10.6647230        -Inf   0.5010683   4.4127669
+[10]  -1.1337589  -0.6119235  -2.3102011  -8.9506204        -Inf  -7.9450568   4.0055249   7.1545604  -8.2024621
+[19]   3.5408918  -5.3631169  10.2901826   9.1064689 -10.9231970   1.2442273   0.5624191  -9.2996982   4.6074413
+[28]   5.4467680   5.0662579  -4.3754921  -1.4169223        -Inf  11.4956050        -Inf        -Inf   7.3778356
+[37]  -5.9646361   1.6583225        -Inf   3.1620914        -Inf        -Inf   5.3639229  -0.3965892        -Inf
+[46]   5.4524344        -Inf        -Inf        -Inf        -Inf        -Inf 109.3778437        -Inf        -Inf
+[55]        -Inf        -Inf        -Inf 123.6901311        -Inf        -Inf        -Inf        -Inf        -Inf
+```
 ```R
-(z.05.arriba <- qnorm(p = 0.05, lower.tail = FALSE)) #z0 tiene que ser mas alta que z.05.arriba 
-# --> [1] 1.644854
-
-(z.05.abajo <- qnorm(p = 0.05, lower.tail = TRUE)) #z0 tiene que ser mas baja que z.05.abajo
-# --> [1] -1.644854
+#Reorganizamos z0b
+z0b <- t(matrix(z0b, nrow = 7, ncol = 9))
 ```
 
-#### Comprobar o rechazar hipotesis nula de que los valores de los cocientes son iguales a `1`
-Region de rechazo de hipotesis nula `Z0 > z.05.arriba` o `Z0 < z.05.abajo`
+Encontrar region de rechazo para dos colas porque la hipotesis alternativa es `Mu!=1`
+Queremos que `alfa=0.1`. Dividimos `alfa/2=0.05`. Sacamos `z05` para ambas colas.
 ```R
-(rechazo.cociente <- (z0 > z.05.arriba) | (z0 < z.05.abajo)) #Los valores de la primer tabal cocientes tiene que ser mas baja que z.05.abajo 
+(z.025.arriba <- qnorm(p = 0.025, lower.tail = FALSE)) #z0 tiene que ser mas alta que z.05.arriba 
 ```
-||0|1|2|3|4|5|6|
-|-|-|-|-|-|-|-|-|
-|0|FALSE|FALSE|FALSE|TRUE|FALSE|TRUE|TRUE|
-|1|FALSE|FALSE|FALSE|FALSE|FALSE|TRUE|TRUE|
-|2|FALSE|FALSE|FALSE|FALSE|FALSE|TRUE|TRUE|
-|3|FALSE|FALSE|FALSE|FALSE |TRUE|TRUE|TRUE|
-|4|TRUE|FALSE|FALSE |TRUE |TRUE|TRUE|TRUE|
-|5|TRUE|FALSE|FALSE |TRUE |TRUE|TRUE|TRUE|
-|6|TRUE|FALSE |TRUE |TRUE |TRUE|TRUE|TRUE|
-|7|TRUE| TRUE |TRUE |TRUE |TRUE|TRUE|TRUE|
-|8|TRUE| TRUE |TRUE |TRUE |TRUE|TRUE|TRUE|
+> [1] 1.959964
 
+```R
+(z.025.abajo <- qnorm(p = 0.025, lower.tail = TRUE)) #z0 tiene que ser mas baja que z.05.abajo
+```
+> [1] -1.959964
+
+Comprobar o rechazar hipotesis nula de que los valores de los cocientes son iguales a 1.
+Region de rechazo de hipotesis nula `Z0 > z.05.arriba` o `Z0 < z.05.abajo`.
+
+```R
+(rechazo.cociente <- (z0 > z.025.arriba) | (z0 < z.025.abajo)) #Los valores de la primer tabal cocientes tiene que ser mas baja que z.05.abajo 
+```
+```
+       0     1     2     3     4    5    6
+  0  TRUE  TRUE  TRUE FALSE  TRUE TRUE TRUE
+  1 FALSE FALSE FALSE FALSE FALSE TRUE TRUE
+  2  TRUE FALSE FALSE  TRUE  TRUE TRUE TRUE
+  3  TRUE  TRUE  TRUE FALSE  TRUE TRUE TRUE
+  4  TRUE  TRUE  TRUE  TRUE  TRUE TRUE TRUE
+  5  TRUE  TRUE  TRUE  TRUE  TRUE TRUE TRUE
+  6  TRUE  TRUE  TRUE  TRUE  TRUE TRUE TRUE
+  7  TRUE  TRUE  TRUE  TRUE  TRUE TRUE TRUE
+  8  TRUE  TRUE  TRUE  TRUE  TRUE TRUE TRUE
+```
 
 O mas grandes que `z.05.arriba`
-
-```R
-(rechazo.samples <- (z0b > z.05.arriba) | (z0b < z.05.abajo)) #Comparamos con las medias del bootstrap
+```R 
+rechazo.samples <- (z0b > z.025.arriba) | (z0b < z.025.abajo) #Comparamos con las medias del bootstrap
+rownames(rechazo.samples) = c("0","1","2","3","4","5","6","7","8")
+colnames(rechazo.samples) = c("0","1","2","3","4","5","6")
+rechazo.samples
 ```
-||[,1]|[,2]|[,3]|[,4]|[,5]|[,6]|[,7]|
+||0|     1|     2|     3|    4|    5|    6|
 |-|-|-|-|-|-|-|-|
-|[1,]|  TRUE| FALSE|  TRUE|  TRUE|  TRUE|  TRUE|  TRUE|
-|[2,]|  TRUE| FALSE| FALSE|  TRUE| FALSE|  TRUE|  TRUE|
-|[3,]|  TRUE|  TRUE|  TRUE| FALSE|  TRUE|  TRUE|  TRUE|
-|[4,]|  TRUE| FALSE| FALSE| FALSE|  TRUE|  TRUE|  TRUE|
-|[5,]|  TRUE|  TRUE|  TRUE| FALSE|  TRUE| FALSE|  TRUE|
-|[6,]|  TRUE| FALSE|  TRUE|  TRUE|  TRUE|  TRUE|  TRUE|
-|[7,]|  TRUE|  TRUE|  TRUE|  TRUE|  TRUE|  TRUE| FALSE|
-|[8,]| FALSE|  TRUE| FALSE|  TRUE|  TRUE|  TRUE|  TRUE|
-|[9,]|  TRUE|  TRUE|  TRUE|  TRUE|  TRUE|  TRUE|  TRUE|
-
+|0|  TRUE|  TRUE|  TRUE|  TRUE| TRUE| TRUE| TRUE|
+|1| FALSE|  TRUE| FALSE| FALSE| TRUE| TRUE| TRUE|
+|2|  TRUE|  TRUE|  TRUE|  TRUE| TRUE| TRUE| TRUE|
+|3|  TRUE|  TRUE| FALSE| FALSE| TRUE| TRUE| TRUE|
+|4|  TRUE|  TRUE| FALSE|  TRUE| TRUE| TRUE| TRUE|
+|5|  TRUE|  TRUE| FALSE|  TRUE| TRUE| TRUE| TRUE|
+|6|  TRUE| FALSE|  TRUE|  TRUE| TRUE| TRUE| TRUE|
+|7|  TRUE|  TRUE|  TRUE|  TRUE| TRUE| TRUE| TRUE|
+|8|  TRUE|  TRUE|  TRUE|  TRUE| TRUE| TRUE| TRUE|
 
 ### Los valores `TRUE` nos indican en que casos se rechaza la hipotesis nula, es decir que existe una dependencia entre las variables `x` y `y`
 ### Los valores `FALSE` nos indican en que casos que no se rechaza `H0`, es decir que las variables `x` y `y` son independientes.

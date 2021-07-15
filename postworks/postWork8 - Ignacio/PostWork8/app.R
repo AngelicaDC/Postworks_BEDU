@@ -50,11 +50,6 @@ ui <-
                                                 HTML("")
                                             )
                                         ),
-                                              # titlePanel("Grafica de Barras de Goles en contra y a favor"), 
-                                              # selectInput("variable", "Seleccione el valor de X",
-                                              #             choices = c("home.score","away.score")),
-                                              # plotOutput("output_plot")
-
                                       )
                               ),
                               
