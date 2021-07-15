@@ -165,7 +165,7 @@ Fut.ligaEsp <- read.csv("https://raw.githubusercontent.com/AngelicaDC/Postworks_
 View(Fut.ligaEsp)
 dim(Fut.ligaEsp)
 #Encontrar la probabilidad marginal de que la casa anote "x" goles a partir de las frec. relativas
-(Frec.abs.FTH <- table(Fut.ligaEsp$FTHG)) #Frecuencias absolutas
+(Frec.abs.FTHG <- table(Fut.ligaEsp$FTHG)) #Frecuencias absolutas
 (pmarg.golesCasa <- c(prop.table(Frec.abs.FTHG))) #Probabilidades marginales
 
 #Encontrar la probabilidad marginal de que el visitante anote "y" goles a partir de las frec. relativas
@@ -195,6 +195,7 @@ df_hv= paste(Fut.ligaEsp$FTHG, Fut.ligaEsp$FTAG)
 class(df_hv)
 df_hv
 #Generamos s1000 muestras
+set.seed(12345)
 bhv = replicate(n=1000, sample(df_hv, replace = TRUE))
 #bhv
 
