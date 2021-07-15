@@ -106,7 +106,8 @@ server <- function(input, output) {
         ggplot(data, aes_string(x = input$variable, fill = "FTR")) +
             geom_bar() +
             facet_wrap(as.factor(data$away.team))+
-            ggtitle("Goles a favor y en contra")}, width = "auto" ,height = 650)
+            ggtitle("Goles a favor y en contra")+
+            ylab("N° de Goles")}, width = "auto" ,height = 650)
     
     output$dataTable <- renderDataTable({data},options = list(aLengthMenu = c(10,20,50), iDisplayLength = 20))
     
