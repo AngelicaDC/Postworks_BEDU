@@ -5,8 +5,9 @@ En este es el repositorio del equipo 14, en donde están guardados los postwork 
 ## Entregas
 Las entregas de los postwork se encuentran agrupadas en dos partes:
 
-- [Primera entrega](primera-etapa.md)
-- [Segunda entrega](https://github.com/AngelicaDC/Postworks_BEDU)
+- [Postworks primera etapa](primera-etapa.md)
+- [Postworks segunda etapa](segunda-etapa.md)
+- [Postworks primera y segunda etapa](postworks-full.md)
 
 ## Equipo 14
 <p align="center"><img src="img/giphy.gif" /></p>
