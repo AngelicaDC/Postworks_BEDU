@@ -1,7 +1,13 @@
-# Postworks Primera Etapa
+# Postworks Bedu - Data Science
+A lo largo del curso estuvimos trabajando con datos de los partidos de la liga española de fútbol en diferentes temporadas. Estos datasets contienen información como la fecha en la que se jugaron los partidos, los equipos que jugaron de casa y visitante, así como El número  de goles anotados por el equipo de casa y el visitante en cada partido.
+
+# Primera Etapa
 A continuacion se muestra el procedimiento utilizado para cumplir con todos los puntos planteados dentro de los postworks de la 1ra a la 4ta sesión.
 
 ## Postwork sesion 1
+Aprendimos a usar la función `read.csv` para importar y leer un archivo separado por comas. Con ayuda de la función table encontramos las probabilidades marginales y conjuntas de que los equipos de casa y visitante anotarán un número determinado de goles.
+
+
 Importamos el data set de la liga de futbol española 2019-2020 usando la funcion read.csv() desde el URL.
 ```R
 LigaEsp2019.2020 <- read.csv("https://www.football-data.co.uk/mmz4281/1920/SP1.csv")
@@ -88,8 +94,10 @@ print("La probabilidad conjunta de que el equipo de casa anote 'x' goles y el eq
 ||6|0.002631579|0.000000000|0.000000000|0.000000000|0.000000000|0.000000000|
 
 
-## Postwork sesion 2
-Creamos una lista con las direcciones donde se encuentran los archivos de futbol de las temporadas 2017/2018, 2018/2019 y 2019/2020 de la primera división de la liga española
+## Postwork 2
+Aprendimos a aplicar la función `lapply` junto con `read.csv` para importar archivos desde una lista con las URLs, leer estos archivos y almacenarlos como data frames dentro de una lista. Con Mutate y as.Date le dimos el formato correcto a la columna de fechas de los partidos. Por último, con `do.call` y `rbind` unimos todos los data frames en un solo, y a este último lo guardamos en un archivo separado por comas con la función `write.csv`.
+
+Creamos una lista con las direcciones donde se encuentran los archivos de futbol de las temporadas `2017/2018`, `2018/2019` y `2019/2020` de la primera división de la liga española
 ```R
 library(dplyr)
 l.URLs <- list("https://www.football-data.co.uk/mmz4281/1718/SP1.csv",
@@ -288,6 +296,7 @@ Guardamos el dataframe final para usarlo en la sesion 3
 write.csv(df.todo.final, file = "Fut.ligaEsp.Postwork2.csv", sep = ",", col.names=TRUE, row.names = FALSE)
 ```
 ## Postwork sesion 3
+
 ```R
 library(dplyr)
 library(ggplot2)
@@ -392,7 +401,6 @@ df.prob.conjunta %>%
   geom_text(aes(label = paste(round(Freq*100,1), "%")))
 ```
 <p align="center"><img src="img/prob-casa-vs-visit.png" /></p>
-
 
 ### Postwork 4
 Importar y leer el archivo resultado del postwork 2; datos de la liga española de futbol
