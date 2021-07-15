@@ -25,6 +25,7 @@ ui <-
                       dashboardSidebar(
                           
                           sidebarMenu(
+                              menuItem("Video Explicativo", tabName = "video", icon = icon("youtube-play")),
                               menuItem("Documentacion postworks", tabName = "postworks", icon = icon("book")),
                               menuItem("Grafica de Barras", tabName = "Barras", icon = icon("bar-chart-o")),
                               menuItem("Graficas de Postwork 3", tabName = "PW3", icon = icon("area-chart")),
@@ -41,6 +42,18 @@ ui <-
                           singleton(tags$head(tags$link(rel="stylesheet", type = "text/css", href = "styles.css"))),
                           
                           tabItems(
+                              
+                              # Video
+                              tabItem(tabName = "video",
+                                      fluidRow(
+                                          box(width = NULL, height = NULL,
+                                              titlePanel("Video explicativo"), 
+                                              tags$body(
+                                                  HTML("<div class=\"v-container\"> <iframe width=\"660\" height=\"415\" src=\"https://www.youtube.com/embed/2vtFTX8V40M\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe></div>")
+                                              )
+                                          ),
+                                      )
+                              ),
                               
                               # Documentacion
                               tabItem(tabName = "postworks",

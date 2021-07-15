@@ -34,3 +34,10 @@ div.row {
 .html-container img {
     max-width: 100%;
 }
+
+.v-container iframe{
+    /* text-align: center; */
+    margin: 0 auto;
+    display: inherit;
+    margin-top: 3rem;
+}

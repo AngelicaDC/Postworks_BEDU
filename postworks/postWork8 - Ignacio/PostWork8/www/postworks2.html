@@ -457,67 +457,224 @@
   8 0.0000000 0.0000000 4.7107438 0.0000000 0.0000000 0.0000000 0.0000000
 
 &gt; [1] 9 7</code></pre>
-<h4 id="hacemos-un-bootstrap-para-generar-datos">Hacemos un bootstrap para generar datos</h4>
-<p>Usamos replace para que se permitan valores repetidos</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">52</span>)</span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>(bootstrap <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="at">n=</span><span class="dv">10</span>, <span class="fu">sample</span>(cociente, <span class="at">replace =</span> <span class="cn">TRUE</span>)))</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(bootstrap)</span></code></pre></div>
-<pre><code>           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]      [,8]      [,9]     [,10]
- [1,] 0.0000000 0.0000000 1.0706236 0.0000000 0.0000000 0.0000000 1.0304752 0.7862903 0.0000000 0.9547829
+<h3 id="generación-de-boostrap-sobre-los-datos">Generación de boostrap sobre los datos</h3>
+<p>Hacemos un bootstrap para generar datos y usamos replace para que se permitan valores repetidos</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>df_hv<span class="ot">=</span> <span class="fu">paste</span>(Fut.ligaEsp<span class="sc">$</span>FTHG, Fut.ligaEsp<span class="sc">$</span>FTAG)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(df_hv)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>df_hv</span></code></pre></div>
+<p><code>[1] "character"</code></p>
+<pre><code>&gt; df_hv
+   [1] &quot;1 0&quot; &quot;1 0&quot; &quot;2 3&quot; &quot;2 2&quot; &quot;1 1&quot; &quot;0 0&quot; &quot;2 0&quot; &quot;0 3&quot; &quot;1 0&quot; &quot;0 1&quot; &quot;2 1&quot; &quot;3 0&quot; &quot;0 2&quot;
 ...
-[63,] 0.5556910 1.5702479 0.0000000 0.9859033 1.0055444 1.0304752 1.0847107 1.0341495 0.7862903 0.8814433</code></pre>
-<pre><code>&gt; [1] 63 10</code></pre>
-<h4 id="sacamos-la-media-y-la-varianza-para-cada-uno-de-los-63-cocientes">Sacamos la media y la varianza para cada uno de los 63 cocientes</h4>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>(medias <span class="ot">&lt;-</span> <span class="fu">apply</span>(bootstrap, <span class="at">MARGIN =</span> <span class="dv">1</span>, <span class="at">FUN =</span> mean))</span></code></pre></div>
-<pre><code>[1] 0.3842172 0.7013610 0.5517611 1.6109840 0.4232022 0.5474264 1.4037280 1.0211746
-....
-[61] 1.0062654 0.4393071 0.8934456</code></pre>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>(varianzas <span class="ot">&lt;-</span> <span class="fu">apply</span>(bootstrap, <span class="at">MARGIN =</span> <span class="dv">1</span>, <span class="at">FUN =</span> var))</span></code></pre></div>
-<pre><code> [1] 0.2513054 0.2549066 0.8844698 2.6849492 0.2989145 0.2275060 2.5615868 0.7134575 3.2043279 0.8291219 0.9134934 0.8830388
-...
-[61] 0.9029202 0.3412171 0.1642536</code></pre>
-<p>Y los convertimos a formato matriz</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>(medias <span class="ot">&lt;-</span> <span class="fu">matrix</span>(medias, <span class="at">nrow =</span> <span class="dv">9</span>, <span class="at">ncol =</span> <span class="dv">7</span>))</span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>(varianzas <span class="ot">&lt;-</span> <span class="fu">matrix</span>(varianzas, <span class="at">nrow =</span> <span class="dv">9</span>, <span class="at">ncol =</span> <span class="dv">7</span>))</span></code></pre></div>
-<pre><code>           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
- [1,] 0.2513054 0.8291219 0.3611043 0.9923537 1.8256371 0.3286291 0.2760714
- [2,] 0.2549066 0.9134934 0.8053723 0.3673276 0.8113255 0.3405729 0.9378178
- [3,] 0.8844698 0.8830388 0.8621120 1.2867375 0.4638121 0.4773409 0.3542384
- [4,] 2.6849492 1.4955013 0.5442545 1.0114142 0.3814934 2.0910316 1.4806174
- [5,] 0.2989145 0.3775208 1.1920885 3.4187267 0.8945184 1.2129402 1.1524027
- [6,] 0.2275060 1.1582626 0.2860759 0.2931550 0.1845271 0.5655591 0.4524549
- [7,] 2.5615868 0.3171602 0.2329543 0.9841421 0.3178651 0.3057011 0.9029202
- [8,] 0.7134575 0.9321624 0.9313782 1.1915777 1.6967469 2.1819950 0.3412171
- [9,] 3.2043279 0.8808224 0.4130167 1.0193859 0.9023203 1.0094015 0.1642536</code></pre>
-<h4 id="calculo-estadistico-de-prueba-para-una-muestra-grande.">Calculo estadistico de prueba para una muestra grande.</h4>
-<blockquote>
-<p>H0: Mu=1</p>
-<p>Ha: Mu!=1</p>
-</blockquote>
-<p>Calculamos el estadistico de prueba para los valores de los cocientes Usamos la varianza obtenida a partir de bootstrap</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>(z0 <span class="ot">&lt;-</span> (cociente<span class="dv">-1</span>)<span class="sc">/</span><span class="fu">sqrt</span>(varianzas<span class="sc">/</span><span class="dv">63</span>))</span></code></pre></div>
+ [989] &quot;2 1&quot; &quot;2 3&quot; &quot;2 2&quot; &quot;1 0&quot; &quot;2 1&quot; &quot;2 1&quot; &quot;2 1&quot; &quot;2 2&quot; &quot;0 0&quot; &quot;0 1&quot; &quot;2 2&quot; &quot;3 3&quot;
+ [ reached getOption(&quot;max.print&quot;) -- omitted 140 entries ]</code></pre>
+<p>Generamos 1000 muestras</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>bhv <span class="ot">=</span> <span class="fu">replicate</span>(<span class="at">n=</span><span class="dv">1000</span>, <span class="fu">sample</span>(df_hv, <span class="at">replace =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="co">#bhv</span></span></code></pre></div>
+<p>Se utiliza la siguiente funcion para empaquetar los resultados de los partidos.</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>reformat <span class="ot">&lt;-</span> <span class="cf">function</span>(s) {</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlist</span>(<span class="fu">lapply</span>(<span class="fu">strsplit</span>(s, <span class="st">&#39; &#39;</span>), strtoi))</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>ref<span class="ot">=</span><span class="fu">apply</span>(bhv, <span class="dv">1</span>, reformat)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(ref)</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(bhv)</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(ref)</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>v1</th>
+<th>v2</th>
+<th>v3</th>
+<th>…</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>0</td>
+<td>2</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>…</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<pre><code>&gt; class(bhv)
+[1] &quot;matrix&quot; &quot;array&quot;
+&gt; dim(ref)
+[1] 2000 1140 </code></pre>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>nones <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>,<span class="fu">dim</span>(ref)[<span class="dv">1</span>],<span class="dv">2</span>)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>pares <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">2</span>,<span class="fu">dim</span>(ref)[<span class="dv">1</span>],<span class="dv">2</span>)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>casa <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(ref[nones,])</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>casa <span class="ot">&lt;-</span> <span class="fu">t</span>(casa)</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>visita <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(ref[pares,])</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>visita <span class="ot">&lt;-</span> <span class="fu">t</span>(visita)</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(visita)</span></code></pre></div>
+<pre><code>[1] 1140 1000</code></pre>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>cocientes.list <span class="ot">&lt;-</span>  <span class="fu">list</span>()</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">dim</span>(visita)[<span class="dv">2</span>]) {</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  dfi <span class="ot">&lt;-</span> <span class="fu">cbind</span>(casa[,i],visita[,i])</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Sacamos frecuencias absolutas y probabilidades marginales</span></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  fabsH<span class="ot">=</span><span class="fu">table</span>(casa[,i])</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>  pmargH <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">prop.table</span>(fabsH))</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>  fabsV <span class="ot">&lt;-</span> <span class="fu">table</span>(visita[,i])</span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>  pmargV <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">prop.table</span>(fabsV))</span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">#Sacamos la probabilidad conjunta</span></span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>  fabsCon <span class="ot">&lt;-</span> <span class="fu">table</span>(dfi[,<span class="dv">1</span>],dfi[,<span class="dv">2</span>])</span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>  pCon <span class="ot">&lt;-</span> <span class="fu">prop.table</span>(fabsCon)</span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>  prod.marg <span class="ot">&lt;-</span> pmargH<span class="sc">%*%</span><span class="fu">t</span>(pmargV)</span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>  cociente.sample <span class="ot">&lt;-</span> pCon<span class="sc">/</span>prod.marg</span>
+<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a>  cocientes.list[[i]] <span class="ot">&lt;-</span> cociente.sample</span>
+<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-17"><a href="#cb53-17" aria-hidden="true" tabindex="-1"></a>dataFrames <span class="ot">&lt;-</span> <span class="fu">lapply</span>(cocientes.list, as.data.frame)</span>
+<span id="cb53-18"><a href="#cb53-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-19"><a href="#cb53-19" aria-hidden="true" tabindex="-1"></a>SuperDataFrame <span class="ot">&lt;-</span> <span class="fu">Reduce</span>(<span class="cf">function</span>(x, y) <span class="fu">merge</span>(x, y, <span class="at">by=</span><span class="fu">c</span>(<span class="st">&quot;Var1&quot;</span>,<span class="st">&quot;Var2&quot;</span>),<span class="at">all=</span><span class="cn">TRUE</span>), dataFrames)</span>
+<span id="cb53-20"><a href="#cb53-20" aria-hidden="true" tabindex="-1"></a><span class="co">#SuperDataFrame</span></span>
+<span id="cb53-21"><a href="#cb53-21" aria-hidden="true" tabindex="-1"></a><span class="co">#str(SuperDataFrame)</span></span>
+<span id="cb53-22"><a href="#cb53-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-23"><a href="#cb53-23" aria-hidden="true" tabindex="-1"></a>SuperDataFrame<span class="sc">$</span>Medias <span class="ot">&lt;-</span> <span class="fu">rowMeans</span>(SuperDataFrame[,<span class="dv">3</span><span class="sc">:</span><span class="dv">1002</span>],<span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<span id="cb53-24"><a href="#cb53-24" aria-hidden="true" tabindex="-1"></a>SuperDataFrame<span class="sc">$</span>sd<span class="ot">&lt;-</span> <span class="fu">apply</span>(SuperDataFrame[,<span class="dv">3</span><span class="sc">:</span><span class="dv">1002</span>], <span class="dv">1</span>, sd,<span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<span id="cb53-25"><a href="#cb53-25" aria-hidden="true" tabindex="-1"></a>SuperDataFrame<span class="sc">$</span>varianza <span class="ot">&lt;-</span> SuperDataFrame<span class="sc">$</span>sd<span class="sc">**</span><span class="dv">2</span></span>
+<span id="cb53-26"><a href="#cb53-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-27"><a href="#cb53-27" aria-hidden="true" tabindex="-1"></a>chiquito <span class="ot">&lt;-</span> <span class="fu">select</span>(SuperDataFrame,<span class="fu">c</span>(<span class="st">&quot;Var1&quot;</span>,<span class="st">&quot;Var2&quot;</span>,<span class="st">&quot;Medias&quot;</span>,<span class="st">&quot;varianza&quot;</span>))</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th>Var1</th>
+<th>Var2</th>
+<th>Medias</th>
+<th>varianza</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>0.9599280</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>0</td>
+<td>1</td>
+<td>1.0228705</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>0</td>
+<td>2</td>
+<td>0.9188134</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>0</td>
+<td>3</td>
+<td>1.4293345</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>0</td>
+<td>4</td>
+<td>0.7862167</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>0</td>
+<td>5</td>
+<td>1.9274841</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>0</td>
+<td>6</td>
+<td>0.0000000</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td>1</td>
+<td>0</td>
+<td>1.0035822</td>
+</tr>
+<tr class="odd">
+<td>…</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Sacamos la media y la varianza para cada uno de los 63 cocientes</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>medias <span class="ot">&lt;-</span> chiquito<span class="sc">$</span>Medias</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>varianzas <span class="ot">&lt;-</span> chiquito<span class="sc">$</span>varianza</span></code></pre></div>
+<p>Calculo estadistico de prueba para una muestra grande. ### H0: Mu=1 ### Ha: Mu!=1</p>
+<p>Calculamos el estadistico de prueba para los valores de los cocientes. Usamos la varianza obtenida a partir de bootstrap</p>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>(z0 <span class="ot">&lt;-</span> (cociente<span class="dv">-1</span>)<span class="sc">/</span><span class="fu">sqrt</span>(varianzas<span class="sc">/</span><span class="dv">63</span>))</span></code></pre></div>
 <pre><code>               0            1            2            3            4            5            6
-  0  -0.71593327   0.17464281  -0.99892863   3.64199544  -1.27967066  13.22829601 -15.10634984
-  1   0.09533093   0.26487612  -0.13188420  -0.18461228  -0.65074948  -6.04296936  -8.19617151
-  2  -0.54721468   0.28844601   0.72414731  -1.49537284   1.58927054  -3.65536969  20.00385573
-  3   0.64286907  -0.97806780   0.32788075   0.04375793  -5.91424201   3.39941199  12.84219992
-  4   1.99120085  -1.53153155  -0.42056072  -4.29277460  20.59902727  -7.20693470  -7.39380741
-  5   4.86283646  -1.46533928   1.04804375 -14.65958349  10.53668289 -10.55434447 -11.80001621
-  6   2.09005668  -0.29059573 -16.44503857  16.51808293 -14.07825501 -14.35561394  -8.35305988
-  7  -9.39693468  15.93347851  -8.22445715  -7.27125033  -6.09342883  -5.37332854 -13.58797911
-  8  -4.43406239  -8.45719037  45.82974403  -7.86141947  -8.35583590  -7.90020408 -19.58451420</code></pre>
+  0   -4.9258122    1.9625216   -1.9882483    1.3016450   -6.1252698    2.4871799         -Inf
+  1    0.6461230    1.4197815   -0.2444047   -0.5041213   -1.3401534         -Inf         -Inf
+  2   -5.3560238    1.1025246    0.5704791   -8.0615523          Inf         -Inf          Inf
+  3    4.0736408   -3.1726911    2.0874013    0.1490621   -2.2369492          Inf  125.6324130
+  4    3.8039319         -Inf   -4.1437735         -Inf          Inf         -Inf         -Inf
+  5    3.3601524  -23.6414712    3.3680419   -4.8515613          Inf         -Inf         -Inf
+  6          Inf   -2.4196671  -23.0240719          Inf  -12.5952724  -29.4831256         -Inf
+  7 -139.8780603  163.0327416  -20.6280892         -Inf  -12.9309968         -Inf         -Inf
+  8 -139.5223199  -40.6748732   26.8321666  -25.4921159         -Inf         -Inf         -Inf</code></pre>
 <p>Y para comparar, calculamos tambien el estadistico de prueba es uno para cada uno de los 63 cocientes del bootstrap.</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>(z0b <span class="ot">&lt;-</span> (medias<span class="dv">-1</span>)<span class="sc">/</span><span class="fu">sqrt</span>(varianzas<span class="sc">/</span><span class="dv">63</span>))</span></code></pre></div>
-<h4 id="encontrar-region-de-rechazo-para-dos-colas-porque-la-hipotesis-alternativa-es-mu1">Encontrar region de rechazo para dos colas porque la hipotesis alternativa es <code>Mu!=1</code></h4>
-<p>Queremos que <code>alfa=0.1</code>. Dividimos <code>alfa/2=0.05</code>. Sacamos <code>z05</code> para ambas colas</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>(z.<span class="fl">05.</span>arriba <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="at">p =</span> <span class="fl">0.05</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)) <span class="co">#z0 tiene que ser mas alta que z.05.arriba </span></span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="co"># --&gt; [1] 1.644854</span></span>
-<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>(z.<span class="fl">05.</span>abajo <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="at">p =</span> <span class="fl">0.05</span>, <span class="at">lower.tail =</span> <span class="cn">TRUE</span>)) <span class="co">#z0 tiene que ser mas baja que z.05.abajo</span></span>
-<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="co"># --&gt; [1] -1.644854</span></span></code></pre></div>
-<h4 id="comprobar-o-rechazar-hipotesis-nula-de-que-los-valores-de-los-cocientes-son-iguales-a-1">Comprobar o rechazar hipotesis nula de que los valores de los cocientes son iguales a <code>1</code></h4>
-<p>Region de rechazo de hipotesis nula <code>Z0 &gt; z.05.arriba</code> o <code>Z0 &lt; z.05.abajo</code></p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>(rechazo.cociente <span class="ot">&lt;-</span> (z0 <span class="sc">&gt;</span> z.<span class="fl">05.</span>arriba) <span class="sc">|</span> (z0 <span class="sc">&lt;</span> z.<span class="fl">05.</span>abajo)) <span class="co">#Los valores de la primer tabal cocientes tiene que ser mas baja que z.05.abajo </span></span></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>(z0b <span class="ot">&lt;-</span> (medias<span class="dv">-1</span>)<span class="sc">/</span><span class="fu">sqrt</span>(varianzas<span class="sc">/</span><span class="dv">63</span>))</span></code></pre></div>
+<pre><code>[1]  -4.3653119   2.4368981  -6.7065292  13.1782642  -5.9290912  10.6647230        -Inf   0.5010683   4.4127669
+[10]  -1.1337589  -0.6119235  -2.3102011  -8.9506204        -Inf  -7.9450568   4.0055249   7.1545604  -8.2024621
+[19]   3.5408918  -5.3631169  10.2901826   9.1064689 -10.9231970   1.2442273   0.5624191  -9.2996982   4.6074413
+[28]   5.4467680   5.0662579  -4.3754921  -1.4169223        -Inf  11.4956050        -Inf        -Inf   7.3778356
+[37]  -5.9646361   1.6583225        -Inf   3.1620914        -Inf        -Inf   5.3639229  -0.3965892        -Inf
+[46]   5.4524344        -Inf        -Inf        -Inf        -Inf        -Inf 109.3778437        -Inf        -Inf
+[55]        -Inf        -Inf        -Inf 123.6901311        -Inf        -Inf        -Inf        -Inf        -Inf</code></pre>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Reorganizamos z0b</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>z0b <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">matrix</span>(z0b, <span class="at">nrow =</span> <span class="dv">7</span>, <span class="at">ncol =</span> <span class="dv">9</span>))</span></code></pre></div>
+<p>Encontrar region de rechazo para dos colas porque la hipotesis alternativa es <code>Mu!=1</code> Queremos que <code>alfa=0.1</code>. Dividimos <code>alfa/2=0.05</code>. Sacamos <code>z05</code> para ambas colas.</p>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>(z.<span class="fl">025.</span>arriba <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="at">p =</span> <span class="fl">0.025</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)) <span class="co">#z0 tiene que ser mas alta que z.05.arriba </span></span></code></pre></div>
+<blockquote>
+<p>[1] 1.959964</p>
+</blockquote>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>(z.<span class="fl">025.</span>abajo <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="at">p =</span> <span class="fl">0.025</span>, <span class="at">lower.tail =</span> <span class="cn">TRUE</span>)) <span class="co">#z0 tiene que ser mas baja que z.05.abajo</span></span></code></pre></div>
+<blockquote>
+<p>[1] -1.959964</p>
+</blockquote>
+<p>Comprobar o rechazar hipotesis nula de que los valores de los cocientes son iguales a 1. Region de rechazo de hipotesis nula <code>Z0 &gt; z.05.arriba</code> o <code>Z0 &lt; z.05.abajo</code>.</p>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>(rechazo.cociente <span class="ot">&lt;-</span> (z0 <span class="sc">&gt;</span> z.<span class="fl">025.</span>arriba) <span class="sc">|</span> (z0 <span class="sc">&lt;</span> z.<span class="fl">025.</span>abajo)) <span class="co">#Los valores de la primer tabal cocientes tiene que ser mas baja que z.05.abajo </span></span></code></pre></div>
+<pre><code>       0     1     2     3     4    5    6
+  0  TRUE  TRUE  TRUE FALSE  TRUE TRUE TRUE
+  1 FALSE FALSE FALSE FALSE FALSE TRUE TRUE
+  2  TRUE FALSE FALSE  TRUE  TRUE TRUE TRUE
+  3  TRUE  TRUE  TRUE FALSE  TRUE TRUE TRUE
+  4  TRUE  TRUE  TRUE  TRUE  TRUE TRUE TRUE
+  5  TRUE  TRUE  TRUE  TRUE  TRUE TRUE TRUE
+  6  TRUE  TRUE  TRUE  TRUE  TRUE TRUE TRUE
+  7  TRUE  TRUE  TRUE  TRUE  TRUE TRUE TRUE
+  8  TRUE  TRUE  TRUE  TRUE  TRUE TRUE TRUE</code></pre>
+<p>O mas grandes que <code>z.05.arriba</code></p>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>rechazo.samples <span class="ot">&lt;-</span> (z0b <span class="sc">&gt;</span> z.<span class="fl">025.</span>arriba) <span class="sc">|</span> (z0b <span class="sc">&lt;</span> z.<span class="fl">025.</span>abajo) <span class="co">#Comparamos con las medias del bootstrap</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(rechazo.samples) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;0&quot;</span>,<span class="st">&quot;1&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;3&quot;</span>,<span class="st">&quot;4&quot;</span>,<span class="st">&quot;5&quot;</span>,<span class="st">&quot;6&quot;</span>,<span class="st">&quot;7&quot;</span>,<span class="st">&quot;8&quot;</span>)</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(rechazo.samples) <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;0&quot;</span>,<span class="st">&quot;1&quot;</span>,<span class="st">&quot;2&quot;</span>,<span class="st">&quot;3&quot;</span>,<span class="st">&quot;4&quot;</span>,<span class="st">&quot;5&quot;</span>,<span class="st">&quot;6&quot;</span>)</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>rechazo.samples</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -534,38 +691,38 @@
 <tbody>
 <tr class="odd">
 <td>0</td>
-<td>FALSE</td>
-<td>FALSE</td>
-<td>FALSE</td>
 <td>TRUE</td>
-<td>FALSE</td>
+<td>TRUE</td>
+<td>TRUE</td>
+<td>TRUE</td>
+<td>TRUE</td>
 <td>TRUE</td>
 <td>TRUE</td>
 </tr>
 <tr class="even">
 <td>1</td>
 <td>FALSE</td>
+<td>TRUE</td>
 <td>FALSE</td>
 <td>FALSE</td>
-<td>FALSE</td>
-<td>FALSE</td>
+<td>TRUE</td>
 <td>TRUE</td>
 <td>TRUE</td>
 </tr>
 <tr class="odd">
 <td>2</td>
-<td>FALSE</td>
-<td>FALSE</td>
-<td>FALSE</td>
-<td>FALSE</td>
-<td>FALSE</td>
+<td>TRUE</td>
+<td>TRUE</td>
+<td>TRUE</td>
+<td>TRUE</td>
+<td>TRUE</td>
 <td>TRUE</td>
 <td>TRUE</td>
 </tr>
 <tr class="even">
 <td>3</td>
-<td>FALSE</td>
-<td>FALSE</td>
+<td>TRUE</td>
+<td>TRUE</td>
 <td>FALSE</td>
 <td>FALSE</td>
 <td>TRUE</td>
@@ -575,7 +732,7 @@
 <tr class="odd">
 <td>4</td>
 <td>TRUE</td>
-<td>FALSE</td>
+<td>TRUE</td>
 <td>FALSE</td>
 <td>TRUE</td>
 <td>TRUE</td>
@@ -585,7 +742,7 @@
 <tr class="even">
 <td>5</td>
 <td>TRUE</td>
-<td>FALSE</td>
+<td>TRUE</td>
 <td>FALSE</td>
 <td>TRUE</td>
 <td>TRUE</td>
@@ -624,181 +781,73 @@
 </tr>
 </tbody>
 </table>
-<p>O mas grandes que <code>z.05.arriba</code></p>
-<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>(rechazo.samples <span class="ot">&lt;-</span> (z0b <span class="sc">&gt;</span> z.<span class="fl">05.</span>arriba) <span class="sc">|</span> (z0b <span class="sc">&lt;</span> z.<span class="fl">05.</span>abajo)) <span class="co">#Comparamos con las medias del bootstrap</span></span></code></pre></div>
-<table>
-<thead>
-<tr class="header">
-<th></th>
-<th>[,1]</th>
-<th>[,2]</th>
-<th>[,3]</th>
-<th>[,4]</th>
-<th>[,5]</th>
-<th>[,6]</th>
-<th>[,7]</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>[1,]</td>
-<td>TRUE</td>
-<td>FALSE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-</tr>
-<tr class="even">
-<td>[2,]</td>
-<td>TRUE</td>
-<td>FALSE</td>
-<td>FALSE</td>
-<td>TRUE</td>
-<td>FALSE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-</tr>
-<tr class="odd">
-<td>[3,]</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>FALSE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-</tr>
-<tr class="even">
-<td>[4,]</td>
-<td>TRUE</td>
-<td>FALSE</td>
-<td>FALSE</td>
-<td>FALSE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-</tr>
-<tr class="odd">
-<td>[5,]</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>FALSE</td>
-<td>TRUE</td>
-<td>FALSE</td>
-<td>TRUE</td>
-</tr>
-<tr class="even">
-<td>[6,]</td>
-<td>TRUE</td>
-<td>FALSE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-</tr>
-<tr class="odd">
-<td>[7,]</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>FALSE</td>
-</tr>
-<tr class="even">
-<td>[8,]</td>
-<td>FALSE</td>
-<td>TRUE</td>
-<td>FALSE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-</tr>
-<tr class="odd">
-<td>[9,]</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-<td>TRUE</td>
-</tr>
-</tbody>
-</table>
 <h3 id="los-valores-true-nos-indican-en-que-casos-se-rechaza-la-hipotesis-nula-es-decir-que-existe-una-dependencia-entre-las-variables-x-y-y">Los valores <code>TRUE</code> nos indican en que casos se rechaza la hipotesis nula, es decir que existe una dependencia entre las variables <code>x</code> y <code>y</code></h3>
 <h3 id="los-valores-false-nos-indican-en-que-casos-que-no-se-rechaza-h0-es-decir-que-las-variables-x-y-y-son-independientes.">Los valores <code>FALSE</code> nos indican en que casos que no se rechaza <code>H0</code>, es decir que las variables <code>x</code> y <code>y</code> son independientes.</h3>
 <h1 id="segunda-etapa">Segunda Etapa</h1>
 <h2 id="postwork-7">Postwork 7</h2>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fbRanks)</span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;C:/Users/Ok/Documents/BEDU/R/postworks/&quot;</span>) <span class="co">#cambiar ubicación</span></span></code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fbRanks)</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;C:/Users/Ok/Documents/BEDU/R/postworks/&quot;</span>) <span class="co">#cambiar ubicación</span></span></code></pre></div>
 <p>Creamos una lista con las direcciones donde se encuentran los archivos de futbol de las temporadas <code>2017/2018</code>, <code>2018/2019</code> y <code>2019/2020</code> de la primera división de la liga española.</p>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>l.URLs <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">&quot;https://www.football-data.co.uk/mmz4281/1718/SP1.csv&quot;</span>,</span>
-<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;https://www.football-data.co.uk/mmz4281/1819/SP1.csv&quot;</span>,</span>
-<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;https://www.football-data.co.uk/mmz4281/1920/SP1.csv&quot;</span></span>
-<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>               )</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>l.URLs <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">&quot;https://www.football-data.co.uk/mmz4281/1718/SP1.csv&quot;</span>,</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;https://www.football-data.co.uk/mmz4281/1819/SP1.csv&quot;</span>,</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;https://www.football-data.co.uk/mmz4281/1920/SP1.csv&quot;</span></span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>               )</span></code></pre></div>
 <p>Leemos los archivos desde las URLs y los guardamos como elementos <code>DataFrame</code> en una lista.</p>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>lista_archivos <span class="ot">&lt;-</span> <span class="fu">lapply</span>(l.URLs, read.csv)</span>
-<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Creo una lista con las columnas seleccionadas de cada dataframe</span></span>
-<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>lista_columnas <span class="ot">&lt;-</span> <span class="fu">lapply</span>(lista_archivos, select, <span class="fu">c</span>(<span class="st">&quot;Date&quot;</span>,<span class="st">&quot;HomeTeam&quot;</span>,<span class="st">&quot;FTHG&quot;</span>,<span class="st">&quot;AwayTeam&quot;</span>,<span class="st">&quot;FTAG&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>lista_archivos <span class="ot">&lt;-</span> <span class="fu">lapply</span>(l.URLs, read.csv)</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Creo una lista con las columnas seleccionadas de cada dataframe</span></span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>lista_columnas <span class="ot">&lt;-</span> <span class="fu">lapply</span>(lista_archivos, select, <span class="fu">c</span>(<span class="st">&quot;Date&quot;</span>,<span class="st">&quot;HomeTeam&quot;</span>,<span class="st">&quot;FTHG&quot;</span>,<span class="st">&quot;AwayTeam&quot;</span>,<span class="st">&quot;FTAG&quot;</span>))</span></code></pre></div>
 <p>La columa <code>Date</code> de los dataframes es de clase caracter. Por lo tanto se procedio a cambiar a clase <code>Date</code> para poder trabajar.</p>
-<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co">#El formato es diferente para cada dataframe</span></span>
-<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>tmp2017.<span class="fl">2018.</span>dfcols <span class="ot">&lt;-</span> <span class="fu">mutate</span>(<span class="fu">data.frame</span>(lista_columnas[<span class="dv">1</span>]), <span class="at">Date =</span> <span class="fu">as.Date</span>(Date, <span class="st">&quot;%d/%m/%y&quot;</span>))</span>
-<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>tmp2018.<span class="fl">2019.</span>dfcols <span class="ot">&lt;-</span> <span class="fu">mutate</span>(<span class="fu">data.frame</span>(lista_columnas[<span class="dv">2</span>]), <span class="at">Date =</span> <span class="fu">as.Date</span>(Date, <span class="st">&quot;%d/%m/%Y&quot;</span>))</span>
-<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>tmp2019.<span class="fl">2020.</span>dfcols <span class="ot">&lt;-</span> <span class="fu">mutate</span>(<span class="fu">data.frame</span>(lista_columnas[<span class="dv">3</span>]), <span class="at">Date =</span> <span class="fu">as.Date</span>(Date, <span class="st">&quot;%d/%m/%Y&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co">#El formato es diferente para cada dataframe</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>tmp2017.<span class="fl">2018.</span>dfcols <span class="ot">&lt;-</span> <span class="fu">mutate</span>(<span class="fu">data.frame</span>(lista_columnas[<span class="dv">1</span>]), <span class="at">Date =</span> <span class="fu">as.Date</span>(Date, <span class="st">&quot;%d/%m/%y&quot;</span>))</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>tmp2018.<span class="fl">2019.</span>dfcols <span class="ot">&lt;-</span> <span class="fu">mutate</span>(<span class="fu">data.frame</span>(lista_columnas[<span class="dv">2</span>]), <span class="at">Date =</span> <span class="fu">as.Date</span>(Date, <span class="st">&quot;%d/%m/%Y&quot;</span>))</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>tmp2019.<span class="fl">2020.</span>dfcols <span class="ot">&lt;-</span> <span class="fu">mutate</span>(<span class="fu">data.frame</span>(lista_columnas[<span class="dv">3</span>]), <span class="at">Date =</span> <span class="fu">as.Date</span>(Date, <span class="st">&quot;%d/%m/%Y&quot;</span>))</span></code></pre></div>
 <p>Creamos un solo dataframe que contenga la informacion de las tres temporadas y lo guardamos.</p>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>lista_final <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>    tmp2017.<span class="fl">2018.</span>dfcols,</span>
-<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>    tmp2018.<span class="fl">2019.</span>dfcols,</span>
-<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>    tmp2019.<span class="fl">2020.</span>dfcols</span>
-<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>SmallData <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, lista_final)</span>
-<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>SmallData <span class="ot">&lt;-</span> <span class="fu">rename</span>(</span>
-<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a>    SmallData, </span>
-<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">date=</span>Date, </span>
-<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">home.team=</span>HomeTeam, </span>
-<span id="cb64-12"><a href="#cb64-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">home.score=</span>FTHG, </span>
-<span id="cb64-13"><a href="#cb64-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">away.team=</span>AwayTeam, </span>
-<span id="cb64-14"><a href="#cb64-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">away.score=</span>FTAG</span>
-<span id="cb64-15"><a href="#cb64-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb64-16"><a href="#cb64-16" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(SmallData, <span class="at">file =</span> <span class="st">&quot;soccer.csv&quot;</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>lista_final <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>    tmp2017.<span class="fl">2018.</span>dfcols,</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>    tmp2018.<span class="fl">2019.</span>dfcols,</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>    tmp2019.<span class="fl">2020.</span>dfcols</span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a>SmallData <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, lista_final)</span>
+<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a>SmallData <span class="ot">&lt;-</span> <span class="fu">rename</span>(</span>
+<span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a>    SmallData, </span>
+<span id="cb69-10"><a href="#cb69-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">date=</span>Date, </span>
+<span id="cb69-11"><a href="#cb69-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">home.team=</span>HomeTeam, </span>
+<span id="cb69-12"><a href="#cb69-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">home.score=</span>FTHG, </span>
+<span id="cb69-13"><a href="#cb69-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">away.team=</span>AwayTeam, </span>
+<span id="cb69-14"><a href="#cb69-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">away.score=</span>FTAG</span>
+<span id="cb69-15"><a href="#cb69-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb69-16"><a href="#cb69-16" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(SmallData, <span class="at">file =</span> <span class="st">&quot;soccer.csv&quot;</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <p>Importamos el <code>archivo soccer.csv</code> como un lista con dataframes a través de la función <code>create.fbRanks.dataframes</code>.</p>
-<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Le damos el formato de fecha</span></span>
-<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>listasoccer <span class="ot">&lt;-</span> <span class="fu">create.fbRanks.dataframes</span>(</span>
-<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;soccer.csv&quot;</span>, </span>
-<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">date.format=</span><span class="st">&quot;%Y-%m-%d&quot;</span>, </span>
-<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.remove =</span> <span class="cn">FALSE</span></span>
-<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Le damos el formato de fecha</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>listasoccer <span class="ot">&lt;-</span> <span class="fu">create.fbRanks.dataframes</span>(</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;soccer.csv&quot;</span>, </span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">date.format=</span><span class="st">&quot;%Y-%m-%d&quot;</span>, </span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.remove =</span> <span class="cn">FALSE</span></span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>Guardamos los dataframes de la lista en dataframes independientes</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>anotaciones <span class="ot">&lt;-</span> listasoccer<span class="sc">$</span>scores</span>
-<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>equipos <span class="ot">&lt;-</span> listasoccer<span class="sc">$</span>teams</span></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>anotaciones <span class="ot">&lt;-</span> listasoccer<span class="sc">$</span>scores</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>equipos <span class="ot">&lt;-</span> listasoccer<span class="sc">$</span>teams</span></code></pre></div>
 <p>Extraemos los valores únicos de fechas. Usando str(anotaciones) nos damos cuenta que date está guardada como una columna de anotaciones</p>
-<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>fecha <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">unique</span>(anotaciones<span class="sc">$</span>date))</span>
-<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(fecha)</span></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>fecha <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">unique</span>(anotaciones<span class="sc">$</span>date))</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(fecha)</span></code></pre></div>
 <p>Con la función <code>rank.teams</code> creamos un ranking de los equipos de acuerdo a su desempeño (anotaciones).</p>
 <p>La función <code>rank.teams</code> ajusta un modelo linear que estima la fuerza de ataque y defensa de los equipos.</p>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>ranking <span class="ot">&lt;-</span> <span class="fu">rank.teams</span>(</span>
-<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">scores=</span>anotaciones, </span>
-<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">teams=</span>equipos, </span>
-<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">max.date=</span><span class="fu">max</span>(fecha), </span>
-<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">min.date=</span><span class="fu">min</span>(fecha), </span>
-<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">date.format=</span><span class="st">&quot;%Y-%m-%d&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>ranking <span class="ot">&lt;-</span> <span class="fu">rank.teams</span>(</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">scores=</span>anotaciones, </span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">teams=</span>equipos, </span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">max.date=</span><span class="fu">max</span>(fecha), </span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">min.date=</span><span class="fu">min</span>(fecha), </span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">date.format=</span><span class="st">&quot;%Y-%m-%d&quot;</span>)</span></code></pre></div>
 <p>Estimar las probabilidades de los eventos que el equipo de casa gane, que el equipo vistante gane o que sea un empate para la última fecha del vector fecha.</p>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>prediccion <span class="ot">=</span> <span class="fu">predict</span>(</span>
-<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>    ranking, </span>
-<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">date =</span> fecha[n], </span>
-<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">max.date=</span><span class="fu">max</span>(fecha), </span>
-<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">min.date=</span><span class="fu">min</span>(fecha)</span>
-<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>prediccion <span class="ot">=</span> <span class="fu">predict</span>(</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>    ranking, </span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">date =</span> fecha[n], </span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">max.date=</span><span class="fu">max</span>(fecha), </span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">min.date=</span><span class="fu">min</span>(fecha)</span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>Predicted Match Results for 2017-08-18 to 2020-07-19
 Model based on data from 2017-08-18 to 2020-07-19
 ---------------------------------------------
@@ -812,21 +861,21 @@ Model based on data from 2017-08-18 to 2020-07-19
 2020-07-19 Levante vs Getafe, HW 25%, AW 47%, T 28%, pred score 0.9-1.4  actual: HW (1-0)
 2020-07-19 Osasuna vs Mallorca, HW 47%, AW 28%, T 25%, pred score 1.6-1.2  actual: T (2-2)
 2020-07-19 Sevilla vs Valencia, HW 34%, AW 39%, T 27%, pred score 1.2-1.3  actual: HW (1-0)</code></pre>
-<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Diez partidos se jugaron en la última fecha. </span></span>
-<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>df.pred.vs.real <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
-<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">fecha=</span>prediccion<span class="sc">$</span>scores<span class="sc">$</span>date, </span>
-<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred.HW=</span>prediccion<span class="sc">$</span>scores<span class="sc">$</span>home.win, </span>
-<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred.AW=</span>prediccion<span class="sc">$</span>scores<span class="sc">$</span>away.win, </span>
-<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred.Empate=</span>prediccion<span class="sc">$</span>scores<span class="sc">$</span>tie,</span>
-<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Real.HomeScore=</span>prediccion<span class="sc">$</span>scores<span class="sc">$</span>home.score, </span>
-<span id="cb71-8"><a href="#cb71-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Real.AwayScore=</span>prediccion<span class="sc">$</span>scores<span class="sc">$</span>away.score,</span>
-<span id="cb71-9"><a href="#cb71-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="fu">filter</span>(</span>
-<span id="cb71-10"><a href="#cb71-10" aria-hidden="true" tabindex="-1"></a>        anotaciones, </span>
-<span id="cb71-11"><a href="#cb71-11" aria-hidden="true" tabindex="-1"></a>        anotaciones<span class="sc">$</span>date<span class="sc">==</span>fecha[n]), </span>
-<span id="cb71-12"><a href="#cb71-12" aria-hidden="true" tabindex="-1"></a>        home.team, </span>
-<span id="cb71-13"><a href="#cb71-13" aria-hidden="true" tabindex="-1"></a>        away.team))</span>
-<span id="cb71-14"><a href="#cb71-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb71-15"><a href="#cb71-15" aria-hidden="true" tabindex="-1"></a>df.pred.vs.real</span></code></pre></div>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Diez partidos se jugaron en la última fecha. </span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>df.pred.vs.real <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">fecha=</span>prediccion<span class="sc">$</span>scores<span class="sc">$</span>date, </span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred.HW=</span>prediccion<span class="sc">$</span>scores<span class="sc">$</span>home.win, </span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred.AW=</span>prediccion<span class="sc">$</span>scores<span class="sc">$</span>away.win, </span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">pred.Empate=</span>prediccion<span class="sc">$</span>scores<span class="sc">$</span>tie,</span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Real.HomeScore=</span>prediccion<span class="sc">$</span>scores<span class="sc">$</span>home.score, </span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Real.AwayScore=</span>prediccion<span class="sc">$</span>scores<span class="sc">$</span>away.score,</span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="fu">filter</span>(</span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>        anotaciones, </span>
+<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a>        anotaciones<span class="sc">$</span>date<span class="sc">==</span>fecha[n]), </span>
+<span id="cb76-12"><a href="#cb76-12" aria-hidden="true" tabindex="-1"></a>        home.team, </span>
+<span id="cb76-13"><a href="#cb76-13" aria-hidden="true" tabindex="-1"></a>        away.team))</span>
+<span id="cb76-14"><a href="#cb76-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-15"><a href="#cb76-15" aria-hidden="true" tabindex="-1"></a>df.pred.vs.real</span></code></pre></div>
 <table>
 <colgroup>
 <col style="width: 12%" />
@@ -960,8 +1009,8 @@ Model based on data from 2017-08-18 to 2020-07-19
 <li>Ath Madrid (casa) y Sociedad (visitante) quedaron empates</li>
 <li>Leganes (casa) y Real Madrid (visitante) quedaron empates</li>
 </ol>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(ranking)</span>
-<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(prediccion)</span></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(ranking)</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(prediccion)</span></code></pre></div>
 <pre><code>List of 8
  $ fit            :List of 1
   ..$ cluster.1:List of 30
@@ -1029,27 +1078,27 @@ List of 7
   .. ..$ : chr [1:10] &quot;Barcelona&quot; &quot;Betis&quot; &quot;Eibar&quot; &quot;Sociedad&quot; ...
   .. ..$ : NULL</code></pre>
 <h2 id="postwork-6">PostWork 6</h2>
-<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggfortify)</span>
-<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages(&quot;ggfortify&quot;)</span></span>
-<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forecast)</span>
-<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(TSstudio)</span>
-<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages(&quot;TSstudio&quot;)</span></span>
-<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span>
-<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb75-11"><a href="#cb75-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb75-12"><a href="#cb75-12" aria-hidden="true" tabindex="-1"></a>match.data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/beduExpert/Programacion-R-Santander-2021/main/Sesion-06/Postwork/match.data.csv&quot;</span>, <span class="at">sep=</span><span class="st">&quot;,&quot;</span>)</span>
-<span id="cb75-13"><a href="#cb75-13" aria-hidden="true" tabindex="-1"></a>match.data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(match.data, <span class="at">sumagoles=</span><span class="fu">c</span>(match.data<span class="sc">$</span>home.score<span class="sc">+</span>match.data<span class="sc">$</span>away.score))</span></code></pre></div>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggfortify)</span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages(&quot;ggfortify&quot;)</span></span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forecast)</span>
+<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(TSstudio)</span>
+<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages(&quot;TSstudio&quot;)</span></span>
+<span id="cb80-9"><a href="#cb80-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span>
+<span id="cb80-10"><a href="#cb80-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-11"><a href="#cb80-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-12"><a href="#cb80-12" aria-hidden="true" tabindex="-1"></a>match.data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/beduExpert/Programacion-R-Santander-2021/main/Sesion-06/Postwork/match.data.csv&quot;</span>, <span class="at">sep=</span><span class="st">&quot;,&quot;</span>)</span>
+<span id="cb80-13"><a href="#cb80-13" aria-hidden="true" tabindex="-1"></a>match.data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(match.data, <span class="at">sumagoles=</span><span class="fu">c</span>(match.data<span class="sc">$</span>home.score<span class="sc">+</span>match.data<span class="sc">$</span>away.score))</span></code></pre></div>
 <p>Fijamos el formato de <code>date</code> y agregamos columna que indica mes y otra que indica mes y año.</p>
-<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>match.data <span class="ot">&lt;-</span> match.data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">as.Date</span>(date, <span class="st">&quot;%Y-%m-%d&quot;</span>), </span>
-<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">mes=</span><span class="fu">months</span>(date),</span>
-<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">Ym =</span> <span class="fu">format</span>(date, <span class="st">&quot;%Y-%m&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a>match.data <span class="ot">&lt;-</span> match.data <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">as.Date</span>(date, <span class="st">&quot;%Y-%m-%d&quot;</span>), </span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">mes=</span><span class="fu">months</span>(date),</span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">Ym =</span> <span class="fu">format</span>(date, <span class="st">&quot;%Y-%m&quot;</span>))</span></code></pre></div>
 <p>Agrupamos por mes y sacamos el promedio de los goles. Con <code>n()</code> podemos sacar el número de partidos de cada mes.</p>
-<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>MES <span class="ot">&lt;-</span> match.data <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(mes) <span class="sc">%&gt;%</span> </span>
-<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">avg_mes =</span> <span class="fu">mean</span>(sumagoles, <span class="at">na.rm=</span><span class="cn">TRUE</span>), <span class="at">n =</span> <span class="fu">n</span>())</span>
-<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(MES)</span></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>MES <span class="ot">&lt;-</span> match.data <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(mes) <span class="sc">%&gt;%</span> </span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">avg_mes =</span> <span class="fu">mean</span>(sumagoles, <span class="at">na.rm=</span><span class="cn">TRUE</span>), <span class="at">n =</span> <span class="fu">n</span>())</span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(MES)</span></code></pre></div>
 <table>
 <thead>
 <tr class="header">
@@ -1123,15 +1172,15 @@ List of 7
 </table>
 <p>Creamos la serie de tiempo del promedio por mes de la suma de goles hasta diciembre de 2019</p>
 <p>Primero solo nos quedamos con el periodo que nos interesa y quitamos los meses que no tienen registros en todos los años del periodo (junio y julio) Tambien quitamos los años que no tengan todos los meses (2010)</p>
-<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>periodo <span class="ot">&lt;-</span> <span class="fu">subset</span>(match.data, (Ym <span class="sc">&gt;=</span> <span class="st">&quot;2010-08&quot;</span> <span class="sc">&amp;</span> Ym <span class="sc">&lt;=</span> <span class="st">&quot;2019-05&quot;</span>))</span>
-<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>periodo <span class="ot">&lt;-</span> <span class="fu">subset</span>(periodo, (mes<span class="sc">!=</span> <span class="st">&quot;junio&quot;</span> <span class="sc">&amp;</span> mes<span class="sc">!=</span><span class="st">&quot;julio&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>periodo <span class="ot">&lt;-</span> <span class="fu">subset</span>(match.data, (Ym <span class="sc">&gt;=</span> <span class="st">&quot;2010-08&quot;</span> <span class="sc">&amp;</span> Ym <span class="sc">&lt;=</span> <span class="st">&quot;2019-05&quot;</span>))</span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>periodo <span class="ot">&lt;-</span> <span class="fu">subset</span>(periodo, (mes<span class="sc">!=</span> <span class="st">&quot;junio&quot;</span> <span class="sc">&amp;</span> mes<span class="sc">!=</span><span class="st">&quot;julio&quot;</span>))</span></code></pre></div>
 <p>Ahora calculamos el promedio por mes por año del periodo que nos interesa</p>
-<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>Ym.periodo <span class="ot">&lt;-</span> periodo <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Ym) <span class="sc">%&gt;%</span> </span>
-<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">avg_Ym =</span> <span class="fu">mean</span>(sumagoles, <span class="at">na.rm=</span><span class="cn">TRUE</span>), <span class="at">n =</span> <span class="fu">n</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>Ym.periodo <span class="ot">&lt;-</span> periodo <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Ym) <span class="sc">%&gt;%</span> </span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">avg_Ym =</span> <span class="fu">mean</span>(sumagoles, <span class="at">na.rm=</span><span class="cn">TRUE</span>), <span class="at">n =</span> <span class="fu">n</span>())</span></code></pre></div>
 <p>Ordenamos el dataframe por fecha</p>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>Ym.periodo <span class="ot">&lt;-</span> Ym.periodo[<span class="fu">order</span>(Ym.periodo<span class="sc">$</span>Ym), ]</span></code></pre></div>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>Ym.periodo <span class="ot">&lt;-</span> Ym.periodo[<span class="fu">order</span>(Ym.periodo<span class="sc">$</span>Ym), ]</span></code></pre></div>
 <p>Creamos la serie de tiempo sólo para el periodo de tiempo con los mismos meses. Se inicia en Agosto del 2010 y termina en mayo de 2019 para tener temporadas completas</p>
-<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a>(golesMensuales.ts <span class="ot">&lt;-</span> <span class="fu">ts</span>(Ym.periodo<span class="sc">$</span>avg_Ym,<span class="at">start =</span><span class="fu">c</span>(<span class="dv">2010</span>,<span class="dv">8</span>), <span class="at">end =</span> <span class="fu">c</span>(<span class="dv">2019</span>,<span class="dv">05</span>), <span class="at">frequency =</span> <span class="dv">10</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>(golesMensuales.ts <span class="ot">&lt;-</span> <span class="fu">ts</span>(Ym.periodo<span class="sc">$</span>avg_Ym,<span class="at">start =</span><span class="fu">c</span>(<span class="dv">2010</span>,<span class="dv">8</span>), <span class="at">end =</span> <span class="fu">c</span>(<span class="dv">2019</span>,<span class="dv">05</span>), <span class="at">frequency =</span> <span class="dv">10</span>))</span></code></pre></div>
 <pre><code>Time Series:
 Start = c(2010, 8) 
 End = c(2019, 5) 
@@ -1146,13 +1195,13 @@ Frequency = 10
 [71] 3.250000 2.300000 2.800000 2.914286 3.033333 2.128205 3.200000 2.604167 2.513514 2.296296
 [81] 3.312500 2.260870 2.644444 2.375000 2.709677 2.526316 2.756098 2.300000</code></pre>
 <p>Graficamos la serie de tiempo</p>
-<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ts_info</span>(golesMensuales.ts)</span>
-<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(<span class="fu">stl</span>(golesMensuales.ts, <span class="at">s.window =</span> <span class="st">&quot;periodic&quot;</span>), <span class="at">ts.colour=</span><span class="st">&quot;blue&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ts_info</span>(golesMensuales.ts)</span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(<span class="fu">stl</span>(golesMensuales.ts, <span class="at">s.window =</span> <span class="st">&quot;periodic&quot;</span>), <span class="at">ts.colour=</span><span class="st">&quot;blue&quot;</span>)</span></code></pre></div>
 <p align="center">
-<img src="https://github.com/AngelicaDC/Postworks_BEDU/blob/main/img/pw7_serie.png?raw=true" />
+<img src="https://github.com/AngelicaDC/Postworks_BEDU/blob/main/img/pw8_serie.png?raw=true" />
 </p>
-<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Descomponemos la serie</span></span>
-<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>(golesMensuales.decom.A <span class="ot">&lt;-</span> <span class="fu">decompose</span>(golesMensuales.ts))</span></code></pre></div>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Descomponemos la serie</span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a>(golesMensuales.decom.A <span class="ot">&lt;-</span> <span class="fu">decompose</span>(golesMensuales.ts))</span></code></pre></div>
 <pre><code>$x
 Time Series:
 Start = c(2010, 8) 
@@ -1200,7 +1249,7 @@ $type
 
 attr(,&quot;class&quot;)
 [1] &quot;decomposed.ts&quot;</code></pre>
-<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(golesMensuales.decom.A)</span></code></pre></div>
+<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(golesMensuales.decom.A)</span></code></pre></div>
 <pre><code>List of 6
  $ x       : Time-Series [1:88] from 2011 to 2019: 2.2 2.42 3.03 2.9 2.73 ...
  $ seasonal: Time-Series [1:88] from 2011 to 2019: 0.3424 -0.2794 -0.0672 0.1768 0.0127 ...
@@ -1210,129 +1259,129 @@ attr(,&quot;class&quot;)
  $ type    : chr &quot;additive&quot;
  - attr(*, &quot;class&quot;)= chr &quot;decomposed.ts&quot;</code></pre>
 <p>Juntamos la serie de tiempo mas su componente estacional para graficarlas juntas</p>
-<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>df<span class="ot">=</span><span class="fu">cbind</span>(<span class="at">Goles_Mes=</span>golesMensuales.ts, <span class="at">Comp_Estacional=</span>golesMensuales.decom.A<span class="sc">$</span>seasonal)</span>
-<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ts_plot</span>(df,</span>
-<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">&quot;Promedio de Goles por Mes&quot;</span>,</span>
-<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">Xtitle =</span> <span class="st">&quot;Tiempo</span><span class="sc">\n</span><span class="st"> Agosto de 2010 a Mayo de 2019,</span><span class="sc">\n</span><span class="st"> exceptuando los meses de junio y julio&quot;</span>,</span>
-<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">Ytitle =</span> <span class="cn">NULL</span>,</span>
-<span id="cb88-6"><a href="#cb88-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">line.mode =</span>  <span class="st">&quot;lines+markers&quot;</span>,</span>
-<span id="cb88-7"><a href="#cb88-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">Xgrid =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb88-8"><a href="#cb88-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">Ygrid =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb88-9"><a href="#cb88-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">type =</span> <span class="st">&quot;multiple&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>df<span class="ot">=</span><span class="fu">cbind</span>(<span class="at">Goles_Mes=</span>golesMensuales.ts, <span class="at">Comp_Estacional=</span>golesMensuales.decom.A<span class="sc">$</span>seasonal)</span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ts_plot</span>(df,</span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">&quot;Promedio de Goles por Mes&quot;</span>,</span>
+<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">Xtitle =</span> <span class="st">&quot;Tiempo</span><span class="sc">\n</span><span class="st"> Agosto de 2010 a Mayo de 2019,</span><span class="sc">\n</span><span class="st"> exceptuando los meses de junio y julio&quot;</span>,</span>
+<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">Ytitle =</span> <span class="cn">NULL</span>,</span>
+<span id="cb93-6"><a href="#cb93-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">line.mode =</span>  <span class="st">&quot;lines+markers&quot;</span>,</span>
+<span id="cb93-7"><a href="#cb93-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">Xgrid =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb93-8"><a href="#cb93-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">Ygrid =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb93-9"><a href="#cb93-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">type =</span> <span class="st">&quot;multiple&quot;</span>)</span></code></pre></div>
 <p align="center">
 <img src="https://github.com/AngelicaDC/Postworks_BEDU/blob/main/img/pw6_ts.png?raw=true" />
 </p>
 <h2 id="postwork-7-1">Postwork 7</h2>
-<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mongolite)</span>
-<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span><span class="fu">mongo</span>(</span>
-<span id="cb89-4"><a href="#cb89-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">collection =</span> <span class="st">&quot;match&quot;</span>,</span>
-<span id="cb89-5"><a href="#cb89-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">db =</span> <span class="st">&quot;match_games&quot;</span>,</span>
-<span id="cb89-6"><a href="#cb89-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">url =</span> <span class="st">&quot;mongodb+srv://introabd:facil001@cluster0.blz9f.mongodb.net/testt&quot;</span>,</span>
-<span id="cb89-7"><a href="#cb89-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb89-8"><a href="#cb89-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">options =</span> <span class="fu">ssl_options</span>()</span>
-<span id="cb89-9"><a href="#cb89-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb89-10"><a href="#cb89-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb89-11"><a href="#cb89-11" aria-hidden="true" tabindex="-1"></a>mydata <span class="ot">&lt;-</span> m<span class="sc">$</span><span class="fu">find</span>()</span>
-<span id="cb89-12"><a href="#cb89-12" aria-hidden="true" tabindex="-1"></a>num.registros <span class="ot">=</span> m<span class="sc">$</span><span class="fu">count</span>()</span>
-<span id="cb89-13"><a href="#cb89-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb89-14"><a href="#cb89-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">&quot;El número total de registros en la colección match es&quot;</span>,num.registros))</span></code></pre></div>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mongolite)</span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span><span class="fu">mongo</span>(</span>
+<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">collection =</span> <span class="st">&quot;match&quot;</span>,</span>
+<span id="cb94-5"><a href="#cb94-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">db =</span> <span class="st">&quot;match_games&quot;</span>,</span>
+<span id="cb94-6"><a href="#cb94-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">url =</span> <span class="st">&quot;mongodb+srv://introabd:facil001@cluster0.blz9f.mongodb.net/testt&quot;</span>,</span>
+<span id="cb94-7"><a href="#cb94-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb94-8"><a href="#cb94-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">options =</span> <span class="fu">ssl_options</span>()</span>
+<span id="cb94-9"><a href="#cb94-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb94-10"><a href="#cb94-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-11"><a href="#cb94-11" aria-hidden="true" tabindex="-1"></a>mydata <span class="ot">&lt;-</span> m<span class="sc">$</span><span class="fu">find</span>()</span>
+<span id="cb94-12"><a href="#cb94-12" aria-hidden="true" tabindex="-1"></a>num.registros <span class="ot">=</span> m<span class="sc">$</span><span class="fu">count</span>()</span>
+<span id="cb94-13"><a href="#cb94-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb94-14"><a href="#cb94-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">&quot;El número total de registros en la colección match es&quot;</span>,num.registros))</span></code></pre></div>
 <blockquote>
 <p>El número total de registros en la colección match es 3800</p>
 </blockquote>
-<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>consulta <span class="ot">=</span> m<span class="sc">$</span><span class="fu">find</span>(<span class="st">&#39;{&quot;date&quot;:&quot;2015-12-20&quot;, &quot;home.team&quot;:&quot;Real Madrid&quot;}&#39;</span>)</span>
-<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>diferencia<span class="ot">=</span><span class="fu">as.numeric</span>(consulta<span class="sc">$</span>home<span class="sc">$</span>score)<span class="sc">-</span><span class="fu">as.numeric</span>(consulta<span class="sc">$</span>away<span class="sc">$</span>score)</span>
-<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">&quot;El equipo Real Madrid goleó a su contrincante&quot;</span>,consulta<span class="sc">$</span>away<span class="sc">$</span>team,</span>
-<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;con una diferencia de&quot;</span>,diferencia,<span class="st">&quot;goles&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>consulta <span class="ot">=</span> m<span class="sc">$</span><span class="fu">find</span>(<span class="st">&#39;{&quot;date&quot;:&quot;2015-12-20&quot;, &quot;home.team&quot;:&quot;Real Madrid&quot;}&#39;</span>)</span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a>diferencia<span class="ot">=</span><span class="fu">as.numeric</span>(consulta<span class="sc">$</span>home<span class="sc">$</span>score)<span class="sc">-</span><span class="fu">as.numeric</span>(consulta<span class="sc">$</span>away<span class="sc">$</span>score)</span>
+<span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">&quot;El equipo Real Madrid goleó a su contrincante&quot;</span>,consulta<span class="sc">$</span>away<span class="sc">$</span>team,</span>
+<span id="cb95-4"><a href="#cb95-4" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;con una diferencia de&quot;</span>,diferencia,<span class="st">&quot;goles&quot;</span>))</span></code></pre></div>
 <blockquote>
 <p>El equipo Real Madrid goleó a su contrincante Vallecano con una diferencia de 8 goles</p>
 </blockquote>
-<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>m<span class="sc">$</span><span class="fu">disconnect</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>m<span class="sc">$</span><span class="fu">disconnect</span>()</span></code></pre></div>
 <h2 id="postwork-8">Postwork 8</h2>
-<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shiny)</span>
-<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shinydashboard)</span>
-<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> </span>
-<span id="cb92-5"><a href="#cb92-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fluidPage</span>(</span>
-<span id="cb92-6"><a href="#cb92-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">dashboardPage</span>(<span class="at">skin =</span> <span class="st">&quot;purple&quot;</span>,</span>
-<span id="cb92-7"><a href="#cb92-7" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">dashboardHeader</span>(<span class="at">title =</span> <span class="st">&quot;PostWork 8&quot;</span>),</span>
-<span id="cb92-8"><a href="#cb92-8" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">dashboardSidebar</span>(</span>
-<span id="cb92-9"><a href="#cb92-9" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">sidebarMenu</span>(</span>
-<span id="cb92-10"><a href="#cb92-10" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">menuItem</span>(<span class="st">&quot;Grafica de Barras&quot;</span>, <span class="at">tabName =</span> <span class="st">&quot;Barras&quot;</span>, <span class="at">icon =</span> <span class="fu">icon</span>(<span class="st">&quot;bar-chart-o&quot;</span>)),</span>
-<span id="cb92-11"><a href="#cb92-11" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">menuItem</span>(<span class="st">&quot;Graficas de Postwork 3&quot;</span>, <span class="at">tabName =</span> <span class="st">&quot;PW3&quot;</span>, <span class="at">icon =</span> <span class="fu">icon</span>(<span class="st">&quot;area-chart&quot;</span>)),</span>
-<span id="cb92-12"><a href="#cb92-12" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">menuItem</span>(<span class="st">&quot;Match Data - DataTable&quot;</span>, <span class="at">tabName =</span> <span class="st">&quot;data_table&quot;</span>, <span class="at">icon =</span> <span class="fu">icon</span>(<span class="st">&quot;table&quot;</span>)),</span>
-<span id="cb92-13"><a href="#cb92-13" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">menuItem</span>(<span class="st">&quot;Factores de Ganancia&quot;</span>, <span class="at">tabName =</span> <span class="st">&quot;Fact&quot;</span>, <span class="at">icon =</span> <span class="fu">icon</span>(<span class="st">&quot;line-chart&quot;</span>))</span>
-<span id="cb92-14"><a href="#cb92-14" aria-hidden="true" tabindex="-1"></a>                          )</span>
-<span id="cb92-15"><a href="#cb92-15" aria-hidden="true" tabindex="-1"></a>                      ),</span>
-<span id="cb92-16"><a href="#cb92-16" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">dashboardBody</span>(</span>
-<span id="cb92-17"><a href="#cb92-17" aria-hidden="true" tabindex="-1"></a>                          <span class="co"># Aditivos :D</span></span>
-<span id="cb92-18"><a href="#cb92-18" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">singleton</span>(tags<span class="sc">$</span><span class="fu">head</span>(tags<span class="sc">$</span><span class="fu">script</span>(<span class="at">src=</span><span class="st">&#39;script.js&#39;</span>))),</span>
-<span id="cb92-19"><a href="#cb92-19" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">singleton</span>(tags<span class="sc">$</span><span class="fu">head</span>(tags<span class="sc">$</span><span class="fu">link</span>(<span class="at">rel=</span><span class="st">&quot;stylesheet&quot;</span>, <span class="at">type =</span> <span class="st">&quot;text/css&quot;</span>, <span class="at">href =</span> <span class="st">&quot;styles.css&quot;</span>))),</span>
-<span id="cb92-20"><a href="#cb92-20" aria-hidden="true" tabindex="-1"></a>                          </span>
-<span id="cb92-21"><a href="#cb92-21" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">tabItems</span>(</span>
-<span id="cb92-22"><a href="#cb92-22" aria-hidden="true" tabindex="-1"></a>                              <span class="co"># Graficas de Barras</span></span>
-<span id="cb92-23"><a href="#cb92-23" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">tabItem</span>(<span class="at">tabName =</span> <span class="st">&quot;Barras&quot;</span>,</span>
-<span id="cb92-24"><a href="#cb92-24" aria-hidden="true" tabindex="-1"></a>                                      <span class="fu">fluidRow</span>(</span>
-<span id="cb92-25"><a href="#cb92-25" aria-hidden="true" tabindex="-1"></a>                                          <span class="fu">box</span>(<span class="at">width =</span> <span class="cn">NULL</span>, <span class="at">height =</span> <span class="cn">NULL</span>,</span>
-<span id="cb92-26"><a href="#cb92-26" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">titlePanel</span>(<span class="st">&quot;Grafica de Barras de Goles en contra y a favor&quot;</span>), </span>
-<span id="cb92-27"><a href="#cb92-27" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">selectInput</span>(<span class="st">&quot;variable&quot;</span>, <span class="st">&quot;Seleccione el valor de X&quot;</span>,</span>
-<span id="cb92-28"><a href="#cb92-28" aria-hidden="true" tabindex="-1"></a>                                                          <span class="at">choices =</span> <span class="fu">c</span>(<span class="st">&quot;home.score&quot;</span>,<span class="st">&quot;away.score&quot;</span>)),</span>
-<span id="cb92-29"><a href="#cb92-29" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">plotOutput</span>(<span class="st">&quot;output_plot&quot;</span>)</span>
-<span id="cb92-30"><a href="#cb92-30" aria-hidden="true" tabindex="-1"></a>                                          )</span>
-<span id="cb92-31"><a href="#cb92-31" aria-hidden="true" tabindex="-1"></a>                                      )</span>
-<span id="cb92-32"><a href="#cb92-32" aria-hidden="true" tabindex="-1"></a>                              ),</span>
-<span id="cb92-33"><a href="#cb92-33" aria-hidden="true" tabindex="-1"></a>                              </span>
-<span id="cb92-34"><a href="#cb92-34" aria-hidden="true" tabindex="-1"></a>                              <span class="co"># Graficas obtenidas en PostWork3</span></span>
-<span id="cb92-35"><a href="#cb92-35" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">tabItem</span>(<span class="at">tabName =</span> <span class="st">&quot;PW3&quot;</span>, </span>
-<span id="cb92-36"><a href="#cb92-36" aria-hidden="true" tabindex="-1"></a>                                      <span class="fu">fluidRow</span>(</span>
-<span id="cb92-37"><a href="#cb92-37" aria-hidden="true" tabindex="-1"></a>                                          <span class="fu">box</span>(<span class="at">width =</span> <span class="cn">NULL</span>, <span class="at">height =</span> <span class="cn">NULL</span>,</span>
-<span id="cb92-38"><a href="#cb92-38" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">titlePanel</span>(<span class="fu">h3</span>(<span class="st">&quot;Graficos obtenidos en Postwork 3&quot;</span>)),</span>
-<span id="cb92-39"><a href="#cb92-39" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">img</span>(<span class="at">src =</span> <span class="st">&quot;Barras.png&quot;</span>, <span class="at">height =</span> <span class="dv">450</span>, <span class="at">width =</span> <span class="dv">650</span>),</span>
-<span id="cb92-40"><a href="#cb92-40" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">img</span>(<span class="at">src =</span>  <span class="st">&quot;ProbConjunta.png&quot;</span>, <span class="at">height =</span> <span class="dv">450</span>, <span class="at">width =</span> <span class="dv">650</span>)</span>
-<span id="cb92-41"><a href="#cb92-41" aria-hidden="true" tabindex="-1"></a>                                          )</span>
-<span id="cb92-42"><a href="#cb92-42" aria-hidden="true" tabindex="-1"></a>                                      )</span>
-<span id="cb92-43"><a href="#cb92-43" aria-hidden="true" tabindex="-1"></a>                              ),</span>
-<span id="cb92-44"><a href="#cb92-44" aria-hidden="true" tabindex="-1"></a>                              <span class="co">#Match Data en DataTable</span></span>
-<span id="cb92-45"><a href="#cb92-45" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">tabItem</span>(<span class="at">tabName =</span> <span class="st">&quot;data_table&quot;</span>,</span>
-<span id="cb92-46"><a href="#cb92-46" aria-hidden="true" tabindex="-1"></a>                                      <span class="fu">fluidRow</span>(</span>
-<span id="cb92-47"><a href="#cb92-47" aria-hidden="true" tabindex="-1"></a>                                          <span class="fu">box</span>(<span class="at">width =</span> <span class="cn">NULL</span>, <span class="at">height =</span> <span class="cn">NULL</span>,</span>
-<span id="cb92-48"><a href="#cb92-48" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">titlePanel</span>(<span class="fu">h3</span>(<span class="st">&quot;Match Data&quot;</span>)),</span>
-<span id="cb92-49"><a href="#cb92-49" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">dataTableOutput</span> (<span class="st">&quot;dataTable&quot;</span>)</span>
-<span id="cb92-50"><a href="#cb92-50" aria-hidden="true" tabindex="-1"></a>                                          )</span>
-<span id="cb92-51"><a href="#cb92-51" aria-hidden="true" tabindex="-1"></a>                                      )</span>
-<span id="cb92-52"><a href="#cb92-52" aria-hidden="true" tabindex="-1"></a>                              ), </span>
-<span id="cb92-53"><a href="#cb92-53" aria-hidden="true" tabindex="-1"></a>                              <span class="co">#Factores de Ganacia Maximos y promedios Obtenidos en momios.r</span></span>
-<span id="cb92-54"><a href="#cb92-54" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">tabItem</span>(<span class="at">tabName =</span> <span class="st">&quot;Fact&quot;</span>,</span>
-<span id="cb92-55"><a href="#cb92-55" aria-hidden="true" tabindex="-1"></a>                                      <span class="fu">fluidRow</span>(</span>
-<span id="cb92-56"><a href="#cb92-56" aria-hidden="true" tabindex="-1"></a>                                          <span class="fu">box</span>(<span class="at">width =</span> <span class="cn">NULL</span>, <span class="at">height =</span> <span class="cn">NULL</span>,</span>
-<span id="cb92-57"><a href="#cb92-57" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">titlePanel</span>(<span class="fu">h3</span>(<span class="st">&quot;Factores de Ganancia&quot;</span>)),</span>
-<span id="cb92-58"><a href="#cb92-58" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">h4</span>(<span class="st">&quot;Factor de Ganancia Maximos:&quot;</span>),</span>
-<span id="cb92-59"><a href="#cb92-59" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">img</span>(<span class="at">src =</span> <span class="st">&quot;Escenario_MomiosMax.png&quot;</span>, <span class="at">height =</span> <span class="dv">450</span>, <span class="at">width =</span> <span class="dv">750</span>),</span>
-<span id="cb92-60"><a href="#cb92-60" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">h4</span>(<span class="st">&quot;Factor de Ganancia Promedios:&quot;</span>),</span>
-<span id="cb92-61"><a href="#cb92-61" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">img</span>(<span class="at">src =</span> <span class="st">&quot;Momios_Promedio.png&quot;</span>, <span class="at">height =</span> <span class="dv">450</span>, <span class="at">width =</span> <span class="dv">750</span>)</span>
-<span id="cb92-62"><a href="#cb92-62" aria-hidden="true" tabindex="-1"></a>                                          )</span>
-<span id="cb92-63"><a href="#cb92-63" aria-hidden="true" tabindex="-1"></a>                                      )</span>
-<span id="cb92-64"><a href="#cb92-64" aria-hidden="true" tabindex="-1"></a>                              )</span>
-<span id="cb92-65"><a href="#cb92-65" aria-hidden="true" tabindex="-1"></a>                          )</span>
-<span id="cb92-66"><a href="#cb92-66" aria-hidden="true" tabindex="-1"></a>                      )</span>
-<span id="cb92-67"><a href="#cb92-67" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb92-68"><a href="#cb92-68" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb92-69"><a href="#cb92-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb92-70"><a href="#cb92-70" aria-hidden="true" tabindex="-1"></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output) {</span>
-<span id="cb92-71"><a href="#cb92-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">library</span>(ggplot2)</span>
-<span id="cb92-72"><a href="#cb92-72" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb92-73"><a href="#cb92-73" aria-hidden="true" tabindex="-1"></a>    data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/AngelicaDC/Postworks_BEDU/main/postworks/postWork8%20-%20Ignacio/PostWork8/data/match.data.csv&quot;</span>)</span>
-<span id="cb92-74"><a href="#cb92-74" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb92-75"><a href="#cb92-75" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>output_plot <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
-<span id="cb92-76"><a href="#cb92-76" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ggplot</span>(data, <span class="fu">aes_string</span>(<span class="at">x =</span> input<span class="sc">$</span>variable, <span class="at">fill =</span> <span class="st">&quot;FTR&quot;</span>)) <span class="sc">+</span></span>
-<span id="cb92-77"><a href="#cb92-77" aria-hidden="true" tabindex="-1"></a>            <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb92-78"><a href="#cb92-78" aria-hidden="true" tabindex="-1"></a>            <span class="fu">facet_wrap</span>(<span class="fu">as.factor</span>(data<span class="sc">$</span>away.team))<span class="sc">+</span></span>
-<span id="cb92-79"><a href="#cb92-79" aria-hidden="true" tabindex="-1"></a>            <span class="fu">ggtitle</span>(<span class="st">&quot;Goles a favor y en contra&quot;</span>)<span class="sc">+</span></span>
-<span id="cb92-80"><a href="#cb92-80" aria-hidden="true" tabindex="-1"></a>            <span class="fu">ylab</span>(<span class="st">&quot;N° de Goles&quot;</span>)}, <span class="at">width =</span> <span class="st">&quot;auto&quot;</span> ,<span class="at">height =</span> <span class="dv">650</span>)</span>
-<span id="cb92-81"><a href="#cb92-81" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>dataTable <span class="ot">&lt;-</span> <span class="fu">renderDataTable</span>({data},<span class="at">options =</span> <span class="fu">list</span>(<span class="at">aLengthMenu =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">50</span>), <span class="at">iDisplayLength =</span> <span class="dv">20</span>))</span>
-<span id="cb92-82"><a href="#cb92-82" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb92-83"><a href="#cb92-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb92-84"><a href="#cb92-84" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(ui, server)</span></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shiny)</span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shinydashboard)</span>
+<span id="cb97-3"><a href="#cb97-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb97-4"><a href="#cb97-4" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> </span>
+<span id="cb97-5"><a href="#cb97-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">fluidPage</span>(</span>
+<span id="cb97-6"><a href="#cb97-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">dashboardPage</span>(<span class="at">skin =</span> <span class="st">&quot;purple&quot;</span>,</span>
+<span id="cb97-7"><a href="#cb97-7" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">dashboardHeader</span>(<span class="at">title =</span> <span class="st">&quot;PostWork 8&quot;</span>),</span>
+<span id="cb97-8"><a href="#cb97-8" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">dashboardSidebar</span>(</span>
+<span id="cb97-9"><a href="#cb97-9" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">sidebarMenu</span>(</span>
+<span id="cb97-10"><a href="#cb97-10" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">menuItem</span>(<span class="st">&quot;Grafica de Barras&quot;</span>, <span class="at">tabName =</span> <span class="st">&quot;Barras&quot;</span>, <span class="at">icon =</span> <span class="fu">icon</span>(<span class="st">&quot;bar-chart-o&quot;</span>)),</span>
+<span id="cb97-11"><a href="#cb97-11" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">menuItem</span>(<span class="st">&quot;Graficas de Postwork 3&quot;</span>, <span class="at">tabName =</span> <span class="st">&quot;PW3&quot;</span>, <span class="at">icon =</span> <span class="fu">icon</span>(<span class="st">&quot;area-chart&quot;</span>)),</span>
+<span id="cb97-12"><a href="#cb97-12" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">menuItem</span>(<span class="st">&quot;Match Data - DataTable&quot;</span>, <span class="at">tabName =</span> <span class="st">&quot;data_table&quot;</span>, <span class="at">icon =</span> <span class="fu">icon</span>(<span class="st">&quot;table&quot;</span>)),</span>
+<span id="cb97-13"><a href="#cb97-13" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">menuItem</span>(<span class="st">&quot;Factores de Ganancia&quot;</span>, <span class="at">tabName =</span> <span class="st">&quot;Fact&quot;</span>, <span class="at">icon =</span> <span class="fu">icon</span>(<span class="st">&quot;line-chart&quot;</span>))</span>
+<span id="cb97-14"><a href="#cb97-14" aria-hidden="true" tabindex="-1"></a>                          )</span>
+<span id="cb97-15"><a href="#cb97-15" aria-hidden="true" tabindex="-1"></a>                      ),</span>
+<span id="cb97-16"><a href="#cb97-16" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">dashboardBody</span>(</span>
+<span id="cb97-17"><a href="#cb97-17" aria-hidden="true" tabindex="-1"></a>                          <span class="co"># Aditivos :D</span></span>
+<span id="cb97-18"><a href="#cb97-18" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">singleton</span>(tags<span class="sc">$</span><span class="fu">head</span>(tags<span class="sc">$</span><span class="fu">script</span>(<span class="at">src=</span><span class="st">&#39;script.js&#39;</span>))),</span>
+<span id="cb97-19"><a href="#cb97-19" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">singleton</span>(tags<span class="sc">$</span><span class="fu">head</span>(tags<span class="sc">$</span><span class="fu">link</span>(<span class="at">rel=</span><span class="st">&quot;stylesheet&quot;</span>, <span class="at">type =</span> <span class="st">&quot;text/css&quot;</span>, <span class="at">href =</span> <span class="st">&quot;styles.css&quot;</span>))),</span>
+<span id="cb97-20"><a href="#cb97-20" aria-hidden="true" tabindex="-1"></a>                          </span>
+<span id="cb97-21"><a href="#cb97-21" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">tabItems</span>(</span>
+<span id="cb97-22"><a href="#cb97-22" aria-hidden="true" tabindex="-1"></a>                              <span class="co"># Graficas de Barras</span></span>
+<span id="cb97-23"><a href="#cb97-23" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">tabItem</span>(<span class="at">tabName =</span> <span class="st">&quot;Barras&quot;</span>,</span>
+<span id="cb97-24"><a href="#cb97-24" aria-hidden="true" tabindex="-1"></a>                                      <span class="fu">fluidRow</span>(</span>
+<span id="cb97-25"><a href="#cb97-25" aria-hidden="true" tabindex="-1"></a>                                          <span class="fu">box</span>(<span class="at">width =</span> <span class="cn">NULL</span>, <span class="at">height =</span> <span class="cn">NULL</span>,</span>
+<span id="cb97-26"><a href="#cb97-26" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">titlePanel</span>(<span class="st">&quot;Grafica de Barras de Goles en contra y a favor&quot;</span>), </span>
+<span id="cb97-27"><a href="#cb97-27" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">selectInput</span>(<span class="st">&quot;variable&quot;</span>, <span class="st">&quot;Seleccione el valor de X&quot;</span>,</span>
+<span id="cb97-28"><a href="#cb97-28" aria-hidden="true" tabindex="-1"></a>                                                          <span class="at">choices =</span> <span class="fu">c</span>(<span class="st">&quot;home.score&quot;</span>,<span class="st">&quot;away.score&quot;</span>)),</span>
+<span id="cb97-29"><a href="#cb97-29" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">plotOutput</span>(<span class="st">&quot;output_plot&quot;</span>)</span>
+<span id="cb97-30"><a href="#cb97-30" aria-hidden="true" tabindex="-1"></a>                                          )</span>
+<span id="cb97-31"><a href="#cb97-31" aria-hidden="true" tabindex="-1"></a>                                      )</span>
+<span id="cb97-32"><a href="#cb97-32" aria-hidden="true" tabindex="-1"></a>                              ),</span>
+<span id="cb97-33"><a href="#cb97-33" aria-hidden="true" tabindex="-1"></a>                              </span>
+<span id="cb97-34"><a href="#cb97-34" aria-hidden="true" tabindex="-1"></a>                              <span class="co"># Graficas obtenidas en PostWork3</span></span>
+<span id="cb97-35"><a href="#cb97-35" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">tabItem</span>(<span class="at">tabName =</span> <span class="st">&quot;PW3&quot;</span>, </span>
+<span id="cb97-36"><a href="#cb97-36" aria-hidden="true" tabindex="-1"></a>                                      <span class="fu">fluidRow</span>(</span>
+<span id="cb97-37"><a href="#cb97-37" aria-hidden="true" tabindex="-1"></a>                                          <span class="fu">box</span>(<span class="at">width =</span> <span class="cn">NULL</span>, <span class="at">height =</span> <span class="cn">NULL</span>,</span>
+<span id="cb97-38"><a href="#cb97-38" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">titlePanel</span>(<span class="fu">h3</span>(<span class="st">&quot;Graficos obtenidos en Postwork 3&quot;</span>)),</span>
+<span id="cb97-39"><a href="#cb97-39" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">img</span>(<span class="at">src =</span> <span class="st">&quot;Barras.png&quot;</span>, <span class="at">height =</span> <span class="dv">450</span>, <span class="at">width =</span> <span class="dv">650</span>),</span>
+<span id="cb97-40"><a href="#cb97-40" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">img</span>(<span class="at">src =</span>  <span class="st">&quot;ProbConjunta.png&quot;</span>, <span class="at">height =</span> <span class="dv">450</span>, <span class="at">width =</span> <span class="dv">650</span>)</span>
+<span id="cb97-41"><a href="#cb97-41" aria-hidden="true" tabindex="-1"></a>                                          )</span>
+<span id="cb97-42"><a href="#cb97-42" aria-hidden="true" tabindex="-1"></a>                                      )</span>
+<span id="cb97-43"><a href="#cb97-43" aria-hidden="true" tabindex="-1"></a>                              ),</span>
+<span id="cb97-44"><a href="#cb97-44" aria-hidden="true" tabindex="-1"></a>                              <span class="co">#Match Data en DataTable</span></span>
+<span id="cb97-45"><a href="#cb97-45" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">tabItem</span>(<span class="at">tabName =</span> <span class="st">&quot;data_table&quot;</span>,</span>
+<span id="cb97-46"><a href="#cb97-46" aria-hidden="true" tabindex="-1"></a>                                      <span class="fu">fluidRow</span>(</span>
+<span id="cb97-47"><a href="#cb97-47" aria-hidden="true" tabindex="-1"></a>                                          <span class="fu">box</span>(<span class="at">width =</span> <span class="cn">NULL</span>, <span class="at">height =</span> <span class="cn">NULL</span>,</span>
+<span id="cb97-48"><a href="#cb97-48" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">titlePanel</span>(<span class="fu">h3</span>(<span class="st">&quot;Match Data&quot;</span>)),</span>
+<span id="cb97-49"><a href="#cb97-49" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">dataTableOutput</span> (<span class="st">&quot;dataTable&quot;</span>)</span>
+<span id="cb97-50"><a href="#cb97-50" aria-hidden="true" tabindex="-1"></a>                                          )</span>
+<span id="cb97-51"><a href="#cb97-51" aria-hidden="true" tabindex="-1"></a>                                      )</span>
+<span id="cb97-52"><a href="#cb97-52" aria-hidden="true" tabindex="-1"></a>                              ), </span>
+<span id="cb97-53"><a href="#cb97-53" aria-hidden="true" tabindex="-1"></a>                              <span class="co">#Factores de Ganacia Maximos y promedios Obtenidos en momios.r</span></span>
+<span id="cb97-54"><a href="#cb97-54" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">tabItem</span>(<span class="at">tabName =</span> <span class="st">&quot;Fact&quot;</span>,</span>
+<span id="cb97-55"><a href="#cb97-55" aria-hidden="true" tabindex="-1"></a>                                      <span class="fu">fluidRow</span>(</span>
+<span id="cb97-56"><a href="#cb97-56" aria-hidden="true" tabindex="-1"></a>                                          <span class="fu">box</span>(<span class="at">width =</span> <span class="cn">NULL</span>, <span class="at">height =</span> <span class="cn">NULL</span>,</span>
+<span id="cb97-57"><a href="#cb97-57" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">titlePanel</span>(<span class="fu">h3</span>(<span class="st">&quot;Factores de Ganancia&quot;</span>)),</span>
+<span id="cb97-58"><a href="#cb97-58" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">h4</span>(<span class="st">&quot;Factor de Ganancia Maximos:&quot;</span>),</span>
+<span id="cb97-59"><a href="#cb97-59" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">img</span>(<span class="at">src =</span> <span class="st">&quot;Escenario_MomiosMax.png&quot;</span>, <span class="at">height =</span> <span class="dv">450</span>, <span class="at">width =</span> <span class="dv">750</span>),</span>
+<span id="cb97-60"><a href="#cb97-60" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">h4</span>(<span class="st">&quot;Factor de Ganancia Promedios:&quot;</span>),</span>
+<span id="cb97-61"><a href="#cb97-61" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">img</span>(<span class="at">src =</span> <span class="st">&quot;Momios_Promedio.png&quot;</span>, <span class="at">height =</span> <span class="dv">450</span>, <span class="at">width =</span> <span class="dv">750</span>)</span>
+<span id="cb97-62"><a href="#cb97-62" aria-hidden="true" tabindex="-1"></a>                                          )</span>
+<span id="cb97-63"><a href="#cb97-63" aria-hidden="true" tabindex="-1"></a>                                      )</span>
+<span id="cb97-64"><a href="#cb97-64" aria-hidden="true" tabindex="-1"></a>                              )</span>
+<span id="cb97-65"><a href="#cb97-65" aria-hidden="true" tabindex="-1"></a>                          )</span>
+<span id="cb97-66"><a href="#cb97-66" aria-hidden="true" tabindex="-1"></a>                      )</span>
+<span id="cb97-67"><a href="#cb97-67" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb97-68"><a href="#cb97-68" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb97-69"><a href="#cb97-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb97-70"><a href="#cb97-70" aria-hidden="true" tabindex="-1"></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output) {</span>
+<span id="cb97-71"><a href="#cb97-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">library</span>(ggplot2)</span>
+<span id="cb97-72"><a href="#cb97-72" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb97-73"><a href="#cb97-73" aria-hidden="true" tabindex="-1"></a>    data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/AngelicaDC/Postworks_BEDU/main/postworks/postWork8%20-%20Ignacio/PostWork8/data/match.data.csv&quot;</span>)</span>
+<span id="cb97-74"><a href="#cb97-74" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb97-75"><a href="#cb97-75" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>output_plot <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
+<span id="cb97-76"><a href="#cb97-76" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ggplot</span>(data, <span class="fu">aes_string</span>(<span class="at">x =</span> input<span class="sc">$</span>variable, <span class="at">fill =</span> <span class="st">&quot;FTR&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb97-77"><a href="#cb97-77" aria-hidden="true" tabindex="-1"></a>            <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb97-78"><a href="#cb97-78" aria-hidden="true" tabindex="-1"></a>            <span class="fu">facet_wrap</span>(<span class="fu">as.factor</span>(data<span class="sc">$</span>away.team))<span class="sc">+</span></span>
+<span id="cb97-79"><a href="#cb97-79" aria-hidden="true" tabindex="-1"></a>            <span class="fu">ggtitle</span>(<span class="st">&quot;Goles a favor y en contra&quot;</span>)<span class="sc">+</span></span>
+<span id="cb97-80"><a href="#cb97-80" aria-hidden="true" tabindex="-1"></a>            <span class="fu">ylab</span>(<span class="st">&quot;N° de Goles&quot;</span>)}, <span class="at">width =</span> <span class="st">&quot;auto&quot;</span> ,<span class="at">height =</span> <span class="dv">650</span>)</span>
+<span id="cb97-81"><a href="#cb97-81" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>dataTable <span class="ot">&lt;-</span> <span class="fu">renderDataTable</span>({data},<span class="at">options =</span> <span class="fu">list</span>(<span class="at">aLengthMenu =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">50</span>), <span class="at">iDisplayLength =</span> <span class="dv">20</span>))</span>
+<span id="cb97-82"><a href="#cb97-82" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb97-83"><a href="#cb97-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb97-84"><a href="#cb97-84" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(ui, server)</span></code></pre></div>
 El codigo anterior se encuetra disponible en el <a href="https://github.com/AngelicaDC/Postworks_BEDU">siguiente repositorio de Github</a>.
 <p align="center">
 <img src="https://github.com/AngelicaDC/Postworks_BEDU/blob/main/img/github.png?raw=true" />
