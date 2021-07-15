@@ -25,6 +25,7 @@ ui <-
                       dashboardSidebar(
                           
                           sidebarMenu(
+                              menuItem("Documentacion postworks", tabName = "postworks", icon = icon("book")),
                               menuItem("Grafica de Barras", tabName = "Barras", icon = icon("bar-chart-o")),
                               menuItem("Graficas de Postwork 3", tabName = "PW3", icon = icon("area-chart")),
                               menuItem("Match Data - DataTable", tabName = "data_table", icon = icon("table")),
@@ -40,6 +41,22 @@ ui <-
                           singleton(tags$head(tags$link(rel="stylesheet", type = "text/css", href = "styles.css"))),
                           
                           tabItems(
+                              
+                              # Documentacion
+                              tabItem(tabName = "postworks",
+                                      fluidRow(
+                                        box(width = NULL, height = NULL,
+                                            tags$body(
+                                                HTML("")
+                                            )
+                                        ),
+                                              # titlePanel("Grafica de Barras de Goles en contra y a favor"), 
+                                              # selectInput("variable", "Seleccione el valor de X",
+                                              #             choices = c("home.score","away.score")),
+                                              # plotOutput("output_plot")
+
+                                      )
+                              ),
                               
                               # Graficas de Barras
                               tabItem(tabName = "Barras",

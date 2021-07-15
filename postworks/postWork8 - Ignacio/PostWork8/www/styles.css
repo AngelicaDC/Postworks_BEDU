@@ -26,3 +26,11 @@ div.row {
 .box-body #output_plot {
     height: auto!important;
 }
+
+.html-container {
+    padding: 1rem 2rem;
+}
+
+.html-container img {
+    max-width: 100%;
+}

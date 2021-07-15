@@ -13,5 +13,13 @@ window.onload = function() {
     
     imgContainer.appendChild(nwContainer); 
 
-    console.log(nwContainer.innerHTML);
+    // Documentacion
+    container = document.querySelector('#shiny-tab-postworks .row .box');
+    container.classList.add('html-container');
+    console.log(container);
+
+
+    fetch('postworks.html').then(r=>r.text()).then(html => {
+        container.innerHTML = html;
+    });
 }
