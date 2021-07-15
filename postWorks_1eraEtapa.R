@@ -25,14 +25,14 @@ for (i in 1:length(frec.rel.goles.visitante)) {
 }
 
 #Tabla de probabilidad conjunto de "x" goles del equipo de casa vs "y" goles del visitante
-print("La probabilidad conjunta de que el equipo de casa anote 'x' goles y el equivo visitante anote 'y' goles est· representada en la tabla:")
+print("La probabilidad conjunta de que el equipo de casa anote 'x' goles y el equivo visitante anote 'y' goles est√° representada en la tabla:")
 (frec.rel.goles <- prop.table(frec.goles))
 
 #Postwork sesion 2
 library(dplyr)
 #setwd("C:/Users/Ok/Documents/BEDU/R/postworks/")
 #Creamos una lista con las direcciones donde se encuentran los archivos de futbol
-#de las temporadas 2017/2018, 2018/2019 y 2019/2020 de la primera divisi√≥n de la liga espa√±ola
+#de las temporadas 2017/2018, 2018/2019 y 2019/2020 de la primera divisi√É¬≥n de la liga espa√É¬±ola
 l.URLs <- list("https://www.football-data.co.uk/mmz4281/1718/SP1.csv",
                "https://www.football-data.co.uk/mmz4281/1819/SP1.csv",
                "https://www.football-data.co.uk/mmz4281/1920/SP1.csv"
@@ -87,7 +87,7 @@ str(df.todo.final)
 
 library(ggplot2)
 
-#Importar y leer el archivo resultado del postwork 2; datos de la liga espa√±ola de futbol
+#Importar y leer el archivo resultado del postwork 2; datos de la liga espa√É¬±ola de futbol
 Fut.ligaEsp <- read.csv("https://raw.githubusercontent.com/AngelicaDC/Postworks_BEDU/main/data/Fut.ligaEsp.Postwork2.csv")
 str(Fut.ligaEsp)
 
@@ -160,7 +160,7 @@ df.prob.conjunta %>%
   geom_text(aes(label = paste(round(Freq*100,1), "%")))
 
 #Fin del postwork 3
-#Importar y leer el archivo resultado del postwork 2; datos de la liga espa√±ola de futbol
+#Importar y leer el archivo resultado del postwork 2; datos de la liga espa√É¬±ola de futbol
 Fut.ligaEsp <- read.csv("https://raw.githubusercontent.com/AngelicaDC/Postworks_BEDU/main/data/Fut.ligaEsp.Postwork2.csv")
 View(Fut.ligaEsp)
 dim(Fut.ligaEsp)
@@ -274,8 +274,10 @@ z0b <- t(matrix(z0b, nrow = 7, ncol = 9))
 #Region de rechazo de hipotesis nula Z0 > z.05.arriba o Z0 < z.05.abajo
 (rechazo.cociente <- (z0 > z.025.arriba) | (z0 < z.025.abajo)) #Los valores de la primer tabal cocientes tiene que ser mas baja que z.05.abajo 
 #o mas grandes que z.05.arriba 
-(rechazo.samples <- (z0b > z.025.arriba) | (z0b < z.025.abajo)) #Comparamos con las medias del bootstrap
-
+rechazo.samples <- (z0b > z.025.arriba) | (z0b < z.025.abajo) #Comparamos con las medias del bootstrap
+rownames(rechazo.samples) = c("0","1","2","3","4","5","6","7","8")
+colnames(rechazo.samples) = c("0","1","2","3","4","5","6")
+rechazo.samples
 #Los valores TRUE nos indican en que casos se rechaza la hipotesis nula, es decir que
 #existe una dependencia entre las variables "x" y "y"
 
@@ -286,10 +288,10 @@ z0b <- t(matrix(z0b, nrow = 7, ncol = 9))
 #PostWork 5
 library(fbRanks)
 library(dplyr)
-#setwd("C:/Users/Ok/Documents/BEDU/R/postworks/") #cambiar ubicaciÛn
+#setwd("C:/Users/Ok/Documents/BEDU/R/postworks/") #cambiar ubicaci√≥n
 
 #Creamos una lista con las direcciones donde se encuentran los archivos de futbol
-#de las temporadas 2017/2018, 2018/2019 y 2019/2020 de la primera divisi√≥n de la liga espa√±ola
+#de las temporadas 2017/2018, 2018/2019 y 2019/2020 de la primera divisi√É¬≥n de la liga espa√É¬±ola
 l.URLs <- list("https://www.football-data.co.uk/mmz4281/1718/SP1.csv",
                "https://www.football-data.co.uk/mmz4281/1819/SP1.csv",
                "https://www.football-data.co.uk/mmz4281/1920/SP1.csv"
@@ -313,7 +315,7 @@ SmallData <- do.call(rbind, lista_final)
 SmallData <- rename(SmallData, date=Date, home.team=HomeTeam, home.score=FTHG, away.team=AwayTeam, away.score=FTAG)
 write.csv(SmallData, file = "soccer.csv", row.names = FALSE)
 
-#Importamos el "archivo soccer.csv" como un lista con dataframes a travÈs de la funciÛn create.fbRanks.dataframes.
+#Importamos el "archivo soccer.csv" como un lista con dataframes a trav√©s de la funci√≥n create.fbRanks.dataframes.
 #Le damos el formato de fecha
 listasoccer <- create.fbRanks.dataframes("https://raw.githubusercontent.com/AngelicaDC/Postworks_BEDU/main/data/soccer.csv", date.format="%Y-%m-%d", na.remove = FALSE)
 
@@ -321,27 +323,27 @@ listasoccer <- create.fbRanks.dataframes("https://raw.githubusercontent.com/Ange
 anotaciones <- listasoccer$scores
 equipos <- listasoccer$teams
 
-#Extraer los valores ˙nicos de fechas. 
-#Usando str(anotaciones) nos damos cuenta que date est· guardada como una columna de anotaciones
+#Extraer los valores √∫nicos de fechas. 
+#Usando str(anotaciones) nos damos cuenta que date est√° guardada como una columna de anotaciones
 fecha <- c(unique(anotaciones$date))
 n <- length(fecha)
 
-#Con la funciÛn rank.teams creamos un ranking de los equipos de acuerdo a su desempeÒo (anotaciones)
-#La funciÛn rank.teams ajusta un modelo linear que estima la fuerza de ataque y defensa de los equipos
+#Con la funci√≥n rank.teams creamos un ranking de los equipos de acuerdo a su desempe√±o (anotaciones)
+#La funci√≥n rank.teams ajusta un modelo linear que estima la fuerza de ataque y defensa de los equipos
 ranking <- rank.teams(scores=anotaciones, teams=equipos, max.date=max(fecha), min.date=min(fecha), date.format="%Y-%m-%d")
 
 #Estimar las probabilidades de los eventos que el equipo de casa gane, que el equipo vistante gane o que sea un empate
-#para la ˙ltima fecha del vector fecha.
+#para la √∫ltima fecha del vector fecha.
 prediccion <-  predict(ranking, date = fecha[n], max.date=max(fecha), min.date=min(fecha))
 
-#Diez partidos se jugaron en la ˙ltima fecha. 
+#Diez partidos se jugaron en la √∫ltima fecha. 
 df.pred.vs.real <-  data.frame(fecha=prediccion$scores$date, pred.HW=prediccion$scores$home.win, pred.AW=prediccion$scores$away.win, pred.Empate=prediccion$scores$tie,
                                Real.HomeScore=prediccion$scores$home.score, Real.AwayScore=prediccion$scores$away.score,
                                select(filter(anotaciones, anotaciones$date==fecha[n]), home.team, away.team))
 df.pred.vs.real
-#De los diez partidos que se jugaron en la ˙ltima fecha, el equipo de casa ganÛ en cinco ocasiones.
-#Contra los pronÛsticos de probabilidades: 
-#     1. El Valldolid (casa) le ganÛ al Betis (visitante); 
+#De los diez partidos que se jugaron en la √∫ltima fecha, el equipo de casa gan√≥ en cinco ocasiones.
+#Contra los pron√≥sticos de probabilidades: 
+#     1. El Valldolid (casa) le gan√≥ al Betis (visitante); 
 #     2. Ath Madrid (casa) y Sociedad (visitante) quedaron empates;
 #     3. Leganes (casa) y Real Madrid (visitante) quedaron empates;
 
@@ -365,31 +367,31 @@ library(plotly)
 match.data <- read.csv("https://raw.githubusercontent.com/beduExpert/Programacion-R-Santander-2021/main/Sesion-06/Postwork/match.data.csv", sep=",")
 match.data <- data.frame(match.data, sumagoles=c(match.data$home.score+match.data$away.score))
 
-#Fijamos el formato de "date" y agregamos columna que indica mes y otra que indica mes y aÒo
+#Fijamos el formato de "date" y agregamos columna que indica mes y otra que indica mes y a√±o
 match.data <- match.data %>% mutate(date = as.Date(date, "%Y-%m-%d"), 
                                     mes=months(date),
                                     Ym = format(date, "%Y-%m"))
 
 #Agrupamos por mes y sacamos el promedio de los goles
-#Con n() podemos sacar el n˙mero de partidos de cada mes
+#Con n() podemos sacar el n√∫mero de partidos de cada mes
 MES <- match.data %>% group_by(mes) %>% 
   summarise(avg_mes = mean(sumagoles, na.rm=TRUE), n = n())
 View(MES)
 ####Crea la serie de tiempo del promedio por mes de la suma de goles hasta diciembre de 2019####
 
 #Primero solo nos quedamos con el periodo que nos interesa 
-#y quitamos los meses que no tienen registros en todos los aÒos del periodo (junio y julio)
-#Tambien quitamos los aÒos que no tengan todos los meses (2010)
+#y quitamos los meses que no tienen registros en todos los a√±os del periodo (junio y julio)
+#Tambien quitamos los a√±os que no tengan todos los meses (2010)
 periodo <- subset(match.data, (Ym >= "2010-08" & Ym <= "2019-05"))
 periodo <- subset(periodo, (mes!= "junio" & mes!="julio"))
 
-##Ahora calculamos el promedio por mes por aÒo del periodo que nos interesa
+##Ahora calculamos el promedio por mes por a√±o del periodo que nos interesa
 Ym.periodo <- periodo %>% group_by(Ym) %>% 
   summarise(avg_Ym = mean(sumagoles, na.rm=TRUE), n = n())
 #Ordenamos el dataframe por fecha
 Ym.periodo <- Ym.periodo[order(Ym.periodo$Ym), ]
 
-#Creamos la serie de tiempo sÛlo para el periodo de tiempo con los mismos meses
+#Creamos la serie de tiempo s√≥lo para el periodo de tiempo con los mismos meses
 #Se inicia en Agosto del 2010 y termina en mayo de 2019 para tener temporadas completas
 (golesMensuales.ts <- ts(Ym.periodo$avg_Ym,start =c(2010,8), end = c(2019,05), frequency = 10))
 
@@ -428,12 +430,12 @@ m <-mongo(
 mydata <- m$find()
 num.registros = m$count()
 
-print(paste("El n˙mero total de registros en la colecciÛn match es",num.registros))
+print(paste("El n√∫mero total de registros en la colecci√≥n match es",num.registros))
 
 consulta = m$find('{"date":"2015-12-20", "home.team":"Real Madrid"}')
 diferencia=as.numeric(consulta$home$score)-as.numeric(consulta$away$score)
 
-print(paste("El equipo Real Madrid goleÛ a su contrincante",consulta$away$team,
+print(paste("El equipo Real Madrid gole√≥ a su contrincante",consulta$away$team,
             "con una diferencia de",diferencia,"goles"))
 
 m$disconnect()
